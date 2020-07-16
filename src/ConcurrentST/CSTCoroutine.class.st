@@ -2,7 +2,8 @@ Class {
 	#name : #CSTCoroutine,
 	#superclass : #Object,
 	#instVars : [
-		'readyQueue'
+		'readyQueue',
+		'thread_id'
 	],
 	#category : #ConcurrentST
 }
@@ -25,12 +26,14 @@ CSTCoroutine >> dispatch: aValue [
 { #category : #initialization }
 CSTCoroutine >> initialize [
 	super initialize.
-	readyQueue := LeftistHeap empty
+	readyQueue := LeftistHeap empty.
+	thread_id := 0
 ]
 
 { #category : #initialization }
 CSTCoroutine >> popThread [
 	| thread |
+	thread_id := thread_id - 1.
 	thread := readyQueue min.
 	readyQueue := readyQueue pop.
 	^ thread
@@ -38,7 +41,8 @@ CSTCoroutine >> popThread [
 
 { #category : #initialization }
 CSTCoroutine >> pushThread: aThread [
-	readyQueue := readyQueue add: aThread
+	readyQueue := readyQueue add: aThread.
+	thread_id := thread_id + 1
 ]
 
 { #category : #'as yet unclassified' }
@@ -61,7 +65,7 @@ CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
 { #category : #initialization }
 CSTCoroutine >> threadForContinuation: k [
 	^ CSTThread new
-		  id: Random new next;
+		  id: thread_id;
 		  continuation: k;
 		  yourself
 ]

@@ -19,9 +19,7 @@ CSTChannelAsynchronous >> initialize [
 CSTChannelAsynchronous >> receive [
 	^ sendQueue isEmpty
 		  ifTrue: [ 
-			  Continuation currentDo: [ :k | 
-				  | thread |
-				  thread := co threadForContinuation: k.
+			  co withThreadDo: [ :thread | 
 				  receiveQueue := receiveQueue add: thread.
 				  co dispatch: nil ] ]
 		  ifFalse: [ 
@@ -32,13 +30,26 @@ CSTChannelAsynchronous >> receive [
 ]
 
 { #category : #'as yet unclassified' }
-CSTChannelAsynchronous >> send: anObject [
-	receiveQueue isEmpty
-		ifTrue: [ sendQueue := sendQueue add: anObject ]
+CSTChannelAsynchronous >> send: msg [
+	"	receiveQueue isEmpty
+		ifTrue: [ sendQueue := sendQueue add: msg ]
 		ifFalse: [ 
-			co withThreadDo: [ 
+			co withThreadDo: [ :t | 
 				| thread |
+				co pushThread: t.
 				thread := receiveQueue min.
 				receiveQueue := receiveQueue pop.
-				thread continuation value: anObject ] ]
+				thread continuation value: msg ] ]"
+
+	co withThreadDo: [ :thread | 
+		co pushThread: thread.
+		receiveQueue isEmpty
+			ifTrue: [ 
+				sendQueue := sendQueue add: msg.
+				co dispatch: nil ]
+			ifFalse: [ 
+				| recvThread |
+				recvThread := receiveQueue min.
+				receiveQueue := receiveQueue pop.
+				recvThread throw: msg ] ]
 ]

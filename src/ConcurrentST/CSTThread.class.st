@@ -37,3 +37,8 @@ CSTThread >> id [
 CSTThread >> id: anObject [
 	id := anObject
 ]
+
+{ #category : #'as yet unclassified' }
+CSTThread >> throw: anObject [
+	^ self continuation value: anObject
+]

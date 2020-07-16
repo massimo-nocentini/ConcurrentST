@@ -17,11 +17,13 @@ CSTChannelTest >> naturals: s channel: channel [
 CSTChannelTest >> testNaturalNumbers [
 	| s interval |
 	s := 0.
-	interval := 1 to: 10.
+	interval := 0 to: 9.
 	self
 		assert: [ :co | 
-			| natsChannel |
-			natsChannel := self naturals: s channel: co channel.
+			| natsChannel res |
+			res := OrderedCollection new.
+			natsChannel := co channel.
+			co spawn: [ self naturals: s channel: natsChannel ].
 			interval collect: [ :_ | natsChannel receive ] ] coroutine
 		equals: interval
 ]
