@@ -12,6 +12,11 @@ CSTCoroutine class >> block: aFullBlockClosure [
 	^ aFullBlockClosure value: self new
 ]
 
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> channel [
+	^ CSTChannel asynchronous: self
+]
+
 { #category : #initialization }
 CSTCoroutine >> dispatch: aValue [
 	^ self popThread continuation value: aValue
@@ -59,6 +64,14 @@ CSTCoroutine >> threadForContinuation: k [
 		  id: Random new next;
 		  continuation: k;
 		  yourself
+]
+
+{ #category : #enumerating }
+CSTCoroutine >> withThreadDo: aBlock [
+	^ Continuation currentDo: [ :k | 
+		  | thread |
+		  thread := self threadForContinuation: k.
+		  aBlock cull: thread ]
 ]
 
 { #category : #initialization }
