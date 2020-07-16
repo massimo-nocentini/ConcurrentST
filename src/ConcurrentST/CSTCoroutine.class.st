@@ -38,15 +38,18 @@ CSTCoroutine >> pushThread: aThread [
 
 { #category : #'as yet unclassified' }
 CSTCoroutine >> spawn: aBlock [
+	^ self spawn: aBlock exceptionHandler: [ self ]
+]
+
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> spawn: aBlock exceptionHandler: hBlock [
 	^ Continuation currentDo: [ :parentK | 
-		  | thread v o d |
+		  | thread d |
 		  thread := self threadForContinuation: parentK.
 		  self pushThread: thread.
-		  o := Object new.
-		  v := aBlock ensure: [ o ].
-		  d := v == o
-			       ifTrue: [ self ]
-			       ifFalse: [ v ].
+		  d := aBlock
+			       on: Exception
+			       do: hBlock.
 		  self dispatch: d ]
 ]
 
