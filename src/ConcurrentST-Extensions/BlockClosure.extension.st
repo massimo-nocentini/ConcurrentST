@@ -4,3 +4,8 @@ Extension { #name : #BlockClosure }
 BlockClosure >> <- anObject [
 	^ anObject prependBlock: self
 ]
+
+{ #category : #'*ConcurrentST-Extensions' }
+BlockClosure >> coroutine [
+	^ CSTCoroutine block: self
+]
