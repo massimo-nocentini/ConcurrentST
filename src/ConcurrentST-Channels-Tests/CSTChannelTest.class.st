@@ -10,19 +10,38 @@ Class {
 { #category : #tests }
 CSTChannelTest >> naturals: s channel: channel [
 	channel send: s.
-	self naturals: s + 1 channel: channel
+	^ self naturals: s + 1 channel: channel
+]
+
+{ #category : #tests }
+CSTChannelTest >> naturalsOnChannel: natsChannel [
+	| i |
+	i := 0.
+	[ 
+	natsChannel send: i.
+	i := i + 1 ] repeat
 ]
 
 { #category : #tests }
 CSTChannelTest >> testNaturalNumbers [
-	| s interval |
-	s := 0.
-	interval := 0 to: 9.
-	self
-		assert: [ :co | 
-			| natsChannel |
-			natsChannel := co channel.
-			co spawn: [ self naturals: s channel: natsChannel ].
-			interval collect: [ :_ | natsChannel receive ] ] coroutine
-		equals: interval
+	10000 in: [ :n | 
+		self
+			assert: [ :co | 
+				| natsChannel thread |
+				natsChannel := co channel.
+				thread := co spawn: [ self naturalsOnChannel: natsChannel ].
+				natsChannel next: n ] coroutine
+			equals: (0 to: n - 1) ]
+]
+
+{ #category : #tests }
+CSTChannelTest >> testNaturalNumbersRecursionSlow [
+	10000 in: [ :n | 
+		self
+			assert: [ :co | 
+				| natsChannel thread |
+				natsChannel := co channel.
+				thread := co spawn: [ self naturals: 0 channel: natsChannel ].
+				natsChannel next: n ] coroutine
+			equals: (0 to: n - 1) ]
 ]

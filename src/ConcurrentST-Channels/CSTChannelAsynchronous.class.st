@@ -21,7 +21,7 @@ CSTChannelAsynchronous >> receive [
 		  ifTrue: [ 
 			  co withThreadDo: [ :thread | 
 				  receiveQueue := receiveQueue add: thread.
-				  co dispatch: nil ] ]
+				  co dispatch: thread ] ]
 		  ifFalse: [ 
 			  | msg |
 			  msg := sendQueue min.
@@ -36,7 +36,7 @@ CSTChannelAsynchronous >> send: msg [
 		receiveQueue isEmpty
 			ifTrue: [ 
 				sendQueue := sendQueue add: msg.
-				co dispatch: nil ]
+				co dispatch: thread ]
 			ifFalse: [ 
 				| recvThread |
 				recvThread := receiveQueue min.

@@ -20,7 +20,7 @@ CSTCoroutine >> channel [
 
 { #category : #initialization }
 CSTCoroutine >> dispatch: aValue [
-	^ self popThread continuation value: aValue
+	^ self popThread throw: aValue
 ]
 
 { #category : #initialization }
@@ -33,7 +33,6 @@ CSTCoroutine >> initialize [
 { #category : #initialization }
 CSTCoroutine >> popThread [
 	| thread |
-	thread_id := thread_id - 1.
 	thread := readyQueue min.
 	readyQueue := readyQueue pop.
 	^ thread
@@ -41,48 +40,39 @@ CSTCoroutine >> popThread [
 
 { #category : #initialization }
 CSTCoroutine >> pushThread: aThread [
-	readyQueue := readyQueue add: aThread.
-	thread_id := thread_id + 1
+	readyQueue := readyQueue add: aThread
 ]
 
 { #category : #'as yet unclassified' }
 CSTCoroutine >> spawn: aBlock [
-	^ self spawn: aBlock on: Exception do: [ self ]
+	^ self spawn: aBlock on: Exception do: [ :e | e traceCr ]
 ]
 
 { #category : #'as yet unclassified' }
 CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
-	^ Continuation currentDo: [ :parentK | 
-		  | thread d |
-		  thread := self threadForContinuation: parentK.
+	^ self withThreadDo: [ :thread | 
 		  self pushThread: thread.
-		  d := aBlock
-			       on: aClass
-			       do: hBlock.
-		  self dispatch: d ]
-]
-
-{ #category : #initialization }
-CSTCoroutine >> threadForContinuation: k [
-	^ CSTThread new
-		  id: thread_id;
-		  continuation: k;
-		  yourself
+		  [ 
+		  aBlock
+			  on: aClass
+			  do: hBlock ] ensure: [ self dispatch: thread ] ]
 ]
 
 { #category : #enumerating }
 CSTCoroutine >> withThreadDo: aBlock [
 	^ Continuation currentDo: [ :k | 
 		  | thread |
-		  thread := self threadForContinuation: k.
-		  aBlock cull: thread ]
+		  thread_id := thread_id + 1.
+		  thread := CSTThread new
+			            id: thread_id;
+			            continuation: k;
+			            yourself.
+		  aBlock value: thread ]
 ]
 
 { #category : #initialization }
 CSTCoroutine >> yield: aValue [
-	^ Continuation currentDo: [ :k | 
-		  | thread |
-		  thread := self threadForContinuation: k.
+	^ self withThreadDo: [ :thread | 
 		  self
 			  pushThread: thread;
 			  dispatch: aValue ]

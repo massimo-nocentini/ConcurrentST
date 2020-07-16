@@ -14,11 +14,6 @@ CSTThread >> <= aCSTThread [
 ]
 
 { #category : #accessing }
-CSTThread >> continuation [
-	^ continuation
-]
-
-{ #category : #accessing }
 CSTThread >> continuation: anObject [
 	continuation := anObject
 ]
@@ -40,5 +35,5 @@ CSTThread >> id: anObject [
 
 { #category : #'as yet unclassified' }
 CSTThread >> throw: anObject [
-	^ self continuation value: anObject
+	^ continuation value: anObject
 ]
