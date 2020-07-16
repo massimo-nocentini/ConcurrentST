@@ -8,6 +8,11 @@ Class {
 	#category : #ConcurrentST
 }
 
+{ #category : #'as yet unclassified' }
+CSTThread >> <= aCSTThread [
+	^ aCSTThread greaterThanThread: self
+]
+
 { #category : #accessing }
 CSTThread >> continuation [
 	^ continuation
@@ -16,6 +21,11 @@ CSTThread >> continuation [
 { #category : #accessing }
 CSTThread >> continuation: anObject [
 	continuation := anObject
+]
+
+{ #category : #'as yet unclassified' }
+CSTThread >> greaterThanThread: aCSTThread [
+	^ self id > aCSTThread id
 ]
 
 { #category : #accessing }

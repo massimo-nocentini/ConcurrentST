@@ -38,28 +38,31 @@ CSTCoroutine >> pushThread: aThread [
 
 { #category : #'as yet unclassified' }
 CSTCoroutine >> spawn: aBlock [
-	^ self spawn: aBlock init: self
+	^ Continuation currentDo: [ :parentK | 
+		  | thread v o d |
+		  thread := self threadForContinuation: parentK.
+		  self pushThread: thread.
+		  o := Object new.
+		  v := aBlock ensure: [ o ].
+		  d := v == o
+			       ifTrue: [ self ]
+			       ifFalse: [ v ].
+		  self dispatch: d ]
 ]
 
-{ #category : #'as yet unclassified' }
-CSTCoroutine >> spawn: aBlock init: aValue [
-	^ Continuation currentDo: [ :parentK | 
-		  | thread |
-		self halt.
-		  thread := CSTThread new
-			            continuation: parentK;
-			            yourself.
-		  self pushThread: thread.
-		  aBlock ensure: [ self dispatch: nil ] ]
+{ #category : #initialization }
+CSTCoroutine >> threadForContinuation: k [
+	^ CSTThread new
+		  id: Random new next;
+		  continuation: k;
+		  yourself
 ]
 
 { #category : #initialization }
 CSTCoroutine >> yield: aValue [
 	^ Continuation currentDo: [ :k | 
 		  | thread |
-		  thread := CSTThread new
-			            continuation: k;
-			            yourself.
+		  thread := self threadForContinuation: k.
 		  self
 			  pushThread: thread;
 			  dispatch: aValue ]
