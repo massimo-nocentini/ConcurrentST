@@ -20,8 +20,7 @@ CSTChannelTest >> testNaturalNumbers [
 	interval := 0 to: 9.
 	self
 		assert: [ :co | 
-			| natsChannel res |
-			res := OrderedCollection new.
+			| natsChannel |
 			natsChannel := co channel.
 			co spawn: [ self naturals: s channel: natsChannel ].
 			interval collect: [ :_ | natsChannel receive ] ] coroutine

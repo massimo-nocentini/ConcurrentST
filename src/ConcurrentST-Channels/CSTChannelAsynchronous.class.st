@@ -31,16 +31,6 @@ CSTChannelAsynchronous >> receive [
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> send: msg [
-	"	receiveQueue isEmpty
-		ifTrue: [ sendQueue := sendQueue add: msg ]
-		ifFalse: [ 
-			co withThreadDo: [ :t | 
-				| thread |
-				co pushThread: t.
-				thread := receiveQueue min.
-				receiveQueue := receiveQueue pop.
-				thread continuation value: msg ] ]"
-
 	co withThreadDo: [ :thread | 
 		co pushThread: thread.
 		receiveQueue isEmpty
