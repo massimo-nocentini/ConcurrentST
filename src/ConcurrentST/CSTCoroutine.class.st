@@ -36,6 +36,23 @@ CSTCoroutine >> pushThread: aThread [
 	readyQueue := readyQueue add: aThread
 ]
 
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> spawn: aBlock [
+	^ self spawn: aBlock init: self
+]
+
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> spawn: aBlock init: aValue [
+	^ Continuation currentDo: [ :parentK | 
+		  | thread |
+		self halt.
+		  thread := CSTThread new
+			            continuation: parentK;
+			            yourself.
+		  self pushThread: thread.
+		  aBlock ensure: [ self dispatch: nil ] ]
+]
+
 { #category : #initialization }
 CSTCoroutine >> yield: aValue [
 	^ Continuation currentDo: [ :k | 
