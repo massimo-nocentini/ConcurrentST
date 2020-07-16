@@ -21,3 +21,25 @@ ContinuationTest >> testPrependBlock [
 				 (kk value: 3) + (k value: 2) ])
 		equals: 4
 ]
+
+{ #category : #'*ConcurrentST-Extensions' }
+ContinuationTest >> testPrependBlockRaisingException [
+	self
+		assert: ([ 
+			 Continuation currentDo: [ :k | 
+				 | kk |
+				 kk := [ :v | Error signal ] <- k.
+				 2 + (kk value: 3) ] ]
+				 on: Error
+				 do: [ 0 ])
+		equals: 0.
+	self
+		assert: ([ 
+			 Continuation currentDo: [ :k | 
+				 | kk |
+				 kk := [ :v | Error signal ] <- k.
+				 (k value: 2) + (kk value: 3) ] ]
+				 on: Error
+				 do: [ 0 ])
+		equals: 2
+]
