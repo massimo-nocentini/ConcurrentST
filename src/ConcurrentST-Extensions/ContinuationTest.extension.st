@@ -1,6 +1,28 @@
 Extension { #name : #ContinuationTest }
 
 { #category : #'*ConcurrentST-Extensions' }
+ContinuationTest >> testEnsureIsCalledAfterCallccNotThrown [
+	| v flag |
+	flag := nil.
+	v := [ :k | [ 3 ] ensure: [ flag := #ensured ] ]
+		     callWithCurrentContinuation.
+	self
+		assert: flag equals: #ensured;
+		assert: v equals: 3
+]
+
+{ #category : #'*ConcurrentST-Extensions' }
+ContinuationTest >> testEnsureIsCalledAfterThrowing [
+	| flag v |
+	flag := nil.
+	v := [ :k | [ 1 + (k value: 3) ] ensure: [ flag := #ensured ] ]
+		     callWithCurrentContinuation.
+	self
+		assert: v equals: 3;
+		assert: flag equals: nil
+]
+
+{ #category : #'*ConcurrentST-Extensions' }
 ContinuationTest >> testPrependBlock [
 	self
 		assert: (Continuation currentDo: [ :k | 

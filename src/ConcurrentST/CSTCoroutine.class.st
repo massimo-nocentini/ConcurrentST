@@ -52,10 +52,10 @@ CSTCoroutine >> spawn: aBlock [
 CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
 	^ self withThreadDo: [ :thread | 
 		  self pushThread: thread.
-		  [ 
 		  aBlock
 			  on: aClass
-			  do: hBlock ] ensure: [ self dispatch: thread ] ]
+			  do: hBlock.
+		  self dispatch: thread ]
 ]
 
 { #category : #enumerating }

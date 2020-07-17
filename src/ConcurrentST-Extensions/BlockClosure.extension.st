@@ -6,6 +6,11 @@ BlockClosure >> <- anObject [
 ]
 
 { #category : #'*ConcurrentST-Extensions' }
+BlockClosure >> callWithCurrentContinuation [
+	^ Continuation currentDo: self
+]
+
+{ #category : #'*ConcurrentST-Extensions' }
 BlockClosure >> coroutine [
 	^ CSTCoroutine block: self
 ]
