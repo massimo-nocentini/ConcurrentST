@@ -35,6 +35,21 @@ CSTChannel >> receive [
 	self subclassResponsibility
 ]
 
+{ #category : #enumerating }
+CSTChannel >> select: aBlock [
+	| channel |
+	channel := self class basicNew
+		           coroutine: co;
+		           initialize;
+		           yourself.
+	co spawn: [ 
+		[ 
+		| i |
+		i := self receive.
+		(aBlock value: i) ifTrue: [ channel send: i ] ] repeat ].
+	^ channel
+]
+
 { #category : #'as yet unclassified' }
 CSTChannel >> send: anObject [
 	self subclassResponsibility
