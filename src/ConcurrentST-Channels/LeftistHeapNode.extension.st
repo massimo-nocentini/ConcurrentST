@@ -1,6 +1,11 @@
 Extension { #name : #LeftistHeapNode }
 
 { #category : #'*ConcurrentST-Channels' }
-LeftistHeapNode >> receiveOnChannel: aChannel [
-	^ aChannel receiveOnNonEmptyQueue: self
+LeftistHeapNode >> receiveFromSendQueueOnChannel: aChannel [
+	^ aChannel receiveFromNonEmptySendQueue
+]
+
+{ #category : #'*ConcurrentST-Channels' }
+LeftistHeapNode >> send: msg toReceiveQueueOnChannel: aChannel [
+	^ aChannel sendToNonEmptyReceiveQueue: msg
 ]

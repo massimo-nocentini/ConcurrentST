@@ -43,28 +43,37 @@ CSTChannelAsynchronous >> pushThread: thread [
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> receive [
-	^ sendQueue receiveOnChannel: self
+	^ sendQueue receiveFromSendQueueOnChannel: self
 ]
 
 { #category : #'as yet unclassified' }
-CSTChannelAsynchronous >> receiveOnEmptyQueue: aQueue [
+CSTChannelAsynchronous >> receiveFromEmptySendQueue [
 	^ co withThreadDo: [ :thread | 
 		  self pushThread: thread.
 		  co dispatch: thread ]
 ]
 
 { #category : #'as yet unclassified' }
-CSTChannelAsynchronous >> receiveOnNonEmptyQueue: aQueue [
+CSTChannelAsynchronous >> receiveFromNonEmptySendQueue [
 	^ self popMessage
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> send: msg [
+	receiveQueue send: msg toReceiveQueueOnChannel: self
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannelAsynchronous >> sendToEmptyReceiveQueue: msg [
 	co withThreadDo: [ :thread | 
 		co pushThread: thread.
-		receiveQueue isEmpty
-			ifTrue: [ 
-				self pushMessage: msg.
-				co dispatch: thread ]
-			ifFalse: [ self popThread throw: msg ] ]
+		self pushMessage: msg.
+		co dispatch: thread ]
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannelAsynchronous >> sendToNonEmptyReceiveQueue: msg [
+	co withThreadDo: [ :thread | 
+		co pushThread: thread.
+		self popThread throw: msg ]
 ]
