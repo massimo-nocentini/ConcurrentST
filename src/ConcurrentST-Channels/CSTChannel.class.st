@@ -15,6 +15,14 @@ CSTChannel class >> asynchronous: co [
 		  yourself
 ]
 
+{ #category : #enumerating }
+CSTChannel >> clone [
+	^ self class basicNew
+		  coroutine: co;
+		  initialize;
+		  yourself
+]
+
 { #category : #'as yet unclassified' }
 CSTChannel >> coroutine: aCoroutine [
 	co := aCoroutine
@@ -38,15 +46,12 @@ CSTChannel >> receive [
 { #category : #enumerating }
 CSTChannel >> select: aBlock [
 	| channel |
-	channel := self class basicNew
-		           coroutine: co;
-		           initialize;
-		           yourself.
+	channel := self clone.
 	co spawn: [ 
 		[ 
 		| i |
 		i := self receive.
-		(aBlock value: i) ifTrue: [ channel send: i ] ] repeat ].
+		(aBlock value: i) ifTrue: [ self halt. channel send: i ] ] repeat ].
 	^ channel
 ]
 
