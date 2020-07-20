@@ -36,6 +36,14 @@ CSTChannel >> coroutine: aCoroutine [
 	co := aCoroutine
 ]
 
+{ #category : #'as yet unclassified' }
+CSTChannel >> delay: outChannel init: anObject [
+	co
+		forever: [ :aMaybe | 
+		aMaybe delay: outChannel init: anObject channel: self ]
+		init: anObject
+]
+
 { #category : #accessing }
 CSTChannel >> next [
 	^ self next: 1
@@ -71,4 +79,29 @@ CSTChannel >> select: aBlock [
 { #category : #'as yet unclassified' }
 CSTChannel >> send: anObject [
 	self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannel >> tee: aCollectionOfChannels [
+	co
+		forever: [ 
+			| v |
+			v := self receive.
+			aCollectionOfChannels do: [ :aChannel | aChannel send: v ] ]
+		init: nil
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannel >> zip: aCollectionOfChannels with: aBlock output: oChannel [
+	co
+		forever: [ 
+			| args v |
+			args := Array
+				        with: self receive
+				        withAll:
+				        (aCollectionOfChannels collect: [ :aChannel | 
+					         aChannel receive ]).
+			v := aBlock valueWithArguments: args.
+			oChannel send: v ]
+		init: nil
 ]

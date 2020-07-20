@@ -28,6 +28,14 @@ CSTCoroutine >> dispatch: aValue [
 	^ self popThread throw: aValue
 ]
 
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> forever: aBlock init: anObject [
+	self spawn: [ 
+		| current |
+		current := anObject.
+		[ current := aBlock cull: current ] repeat ]
+]
+
 { #category : #initialization }
 CSTCoroutine >> initialize [
 	super initialize.
