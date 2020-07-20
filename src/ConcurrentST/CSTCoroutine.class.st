@@ -14,8 +14,13 @@ CSTCoroutine class >> block: aFullBlockClosure [
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> channel [
+CSTCoroutine >> asynchronousChannel [
 	^ CSTChannel asynchronous: self
+]
+
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> channel [
+	^ CSTChannel synchronous: self
 ]
 
 { #category : #initialization }
@@ -56,11 +61,6 @@ CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
 			  on: aClass
 			  do: hBlock."
 		  aBlock ensure: [ self dispatch: thread ] ]
-]
-
-{ #category : #'as yet unclassified' }
-CSTCoroutine >> synchronousChannel [
-	^ CSTChannel synchronous: self
 ]
 
 { #category : #enumerating }

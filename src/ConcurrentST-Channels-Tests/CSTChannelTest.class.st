@@ -20,17 +20,17 @@ CSTChannelTest >> head: natsChannel primes: primesChannel [
 
 { #category : #tests }
 CSTChannelTest >> naturals: s channel: channel [
-	channel send: s.
-	^ self naturals: s + 1 channel: channel
+	| i |
+	i := s.
+	[ 
+	channel send: i.
+	i := i + 1 ] repeat
 ]
 
 { #category : #tests }
-CSTChannelTest >> naturalsOnChannel: natsChannel [
-	| i |
-	i := 0.
-	[ 
-	natsChannel send: i.
-	i := i + 1 ] repeat
+CSTChannelTest >> recursiveNaturals: s channel: channel [
+	channel send: s.
+	^ self recursiveNaturals: s + 1 channel: channel
 ]
 
 { #category : #tests }
@@ -38,9 +38,9 @@ CSTChannelTest >> testNaturalNumbers [
 	10000 in: [ :n | 
 		self
 			assert: [ :co | 
-				| natsChannel thread |
+				| natsChannel |
 				natsChannel := co channel.
-				thread := co spawn: [ self naturalsOnChannel: natsChannel ].
+				co spawn: [ self naturals: 0 channel: natsChannel ].
 				natsChannel next: n ] coroutine
 			equals: (0 to: n - 1) ]
 ]
@@ -50,9 +50,9 @@ CSTChannelTest >> testNaturalNumbersRecursionSlow [
 	10000 in: [ :n | 
 		self
 			assert: [ :co | 
-				| natsChannel thread |
+				| natsChannel |
 				natsChannel := co channel.
-				thread := co spawn: [ self naturals: 0 channel: natsChannel ].
+				co spawn: [ self recursiveNaturals: 0 channel: natsChannel ].
 				natsChannel next: n ] coroutine
 			equals: (0 to: n - 1) ]
 ]
@@ -62,12 +62,11 @@ CSTChannelTest >> testNaturalNumbersSpawn [
 	10000 in: [ :n | 
 		self
 			assert: [ :co | 
-				| natsChannel res |
-				res := OrderedCollection new writeStream.
-				natsChannel := co synchronousChannel.
-				co spawn: [ self naturalsOnChannel: natsChannel ].
-				natsChannel next: n on: res.
-				res contents asArray ] coroutine
+				| natsChannel |
+				natsChannel := co asynchronousChannel.
+				co spawn: [ self naturals: 0 channel: natsChannel ].
+				Array streamContents: [ :aStream | 
+					natsChannel next: n on: aStream ] ] coroutine
 			equals: (0 to: n - 1) ]
 ]
 
@@ -79,10 +78,9 @@ CSTChannelTest >> testPrimeNumbers [
 				| natsChannel primesChannel |
 				natsChannel := co channel.
 				primesChannel := co channel.
-				co spawn: [ self naturalsOnChannel: natsChannel ].
-				co spawn: [ 
-					natsChannel next: 2. "discard 0 and 1."
-					self head: natsChannel primes: primesChannel ].
+				co
+					spawn: [ self naturals: 2 channel: natsChannel ];
+					spawn: [ self head: natsChannel primes: primesChannel ].
 				primesChannel next: n ] coroutine
 			equals:
 				#( 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79
