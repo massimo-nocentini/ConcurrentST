@@ -52,10 +52,15 @@ CSTCoroutine >> spawn: aBlock [
 CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
 	^ self withThreadDo: [ :thread | 
 		  self pushThread: thread.
-		  aBlock
+		  "aBlock
 			  on: aClass
-			  do: hBlock.
-		  self dispatch: thread ]
+			  do: hBlock."
+		  aBlock ensure: [ self dispatch: thread ] ]
+]
+
+{ #category : #'as yet unclassified' }
+CSTCoroutine >> synchronousChannel [
+	^ CSTChannel synchronous: self
 ]
 
 { #category : #enumerating }

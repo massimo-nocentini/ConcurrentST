@@ -58,6 +58,20 @@ CSTChannelTest >> testNaturalNumbersRecursionSlow [
 ]
 
 { #category : #tests }
+CSTChannelTest >> testNaturalNumbersSpawn [
+	10000 in: [ :n | 
+		self
+			assert: [ :co | 
+				| natsChannel res |
+				res := OrderedCollection new writeStream.
+				natsChannel := co synchronousChannel.
+				co spawn: [ self naturalsOnChannel: natsChannel ].
+				natsChannel next: n on: res.
+				res contents asArray ] coroutine
+			equals: (0 to: n - 1) ]
+]
+
+{ #category : #tests }
 CSTChannelTest >> testPrimeNumbers [
 	100 in: [ :n | 
 		self

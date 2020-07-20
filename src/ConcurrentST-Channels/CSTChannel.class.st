@@ -15,6 +15,14 @@ CSTChannel class >> asynchronous: co [
 		  yourself
 ]
 
+{ #category : #'as yet unclassified' }
+CSTChannel class >> synchronous: co [
+	^ CSTChannelSynchronous basicNew
+		  coroutine: co;
+		  initialize;
+		  yourself
+]
+
 { #category : #enumerating }
 CSTChannel >> clone [
 	^ self class basicNew
@@ -38,6 +46,11 @@ CSTChannel >> next: n [
 	^ (1 to: n) collect: [ :_ | self receive ]
 ]
 
+{ #category : #accessing }
+CSTChannel >> next: n on: aStream [
+	n timesRepeat: [ aStream nextPut: self receive ]
+]
+
 { #category : #'as yet unclassified' }
 CSTChannel >> receive [
 	self subclassResponsibility
@@ -51,7 +64,7 @@ CSTChannel >> select: aBlock [
 		[ 
 		| i |
 		i := self receive.
-		(aBlock value: i) ifTrue: [ self halt. channel send: i ] ] repeat ].
+		(aBlock value: i) ifTrue: [ channel send: i ] ] repeat ].
 	^ channel
 ]
 
