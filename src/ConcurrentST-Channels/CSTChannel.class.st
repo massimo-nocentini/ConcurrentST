@@ -39,7 +39,7 @@ CSTChannel >> coroutine: aCoroutine [
 { #category : #'as yet unclassified' }
 CSTChannel >> delay: outChannel init: anObject [
 	co
-		forever: [ :aMaybe | 
+		repeat: [ :aMaybe | 
 		aMaybe delay: outChannel init: anObject channel: self ]
 		init: anObject
 ]
@@ -83,25 +83,21 @@ CSTChannel >> send: anObject [
 
 { #category : #'as yet unclassified' }
 CSTChannel >> tee: aCollectionOfChannels [
-	co
-		forever: [ 
-			| v |
-			v := self receive.
-			aCollectionOfChannels do: [ :aChannel | aChannel send: v ] ]
-		init: nil
+	co repeat: [ 
+		| v |
+		v := self receive.
+		aCollectionOfChannels do: [ :aChannel | aChannel send: v ] ]
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannel >> zip: aCollectionOfChannels with: aBlock output: oChannel [
-	co
-		forever: [ 
-			| args v |
-			args := Array
-				        with: self receive
-				        withAll:
-				        (aCollectionOfChannels collect: [ :aChannel | 
-					         aChannel receive ]).
-			v := aBlock valueWithArguments: args.
-			oChannel send: v ]
-		init: nil
+	co repeat: [ 
+		| args v |
+		args := Array
+			        with: self receive
+			        withAll:
+			        (aCollectionOfChannels collect: [ :aChannel | 
+				         aChannel receive ]).
+		v := aBlock valueWithArguments: args.
+		oChannel send: v ]
 ]
