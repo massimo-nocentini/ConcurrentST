@@ -86,19 +86,19 @@ CSTChannelTest >> testFibonacciNumbersDeadlock [
 		self
 			should: [ :co | 
 				| c1 c2 c3 c4 c5 outChannel |
-				c1 := co channel.
-				c2 := co channel.
-				c3 := co channel.
-				c4 := co channel.
-				c5 := co channel.
-				outChannel := co channel.
+				c1 := co asynchronousSelectiveChannel.
+				c2 := co asynchronousSelectiveChannel.
+				c3 := co asynchronousSelectiveChannel.
+				c4 := co asynchronousSelectiveChannel.
+				c5 := co asynchronousSelectiveChannel.
+				outChannel := co asynchronousSelectiveChannel.
 
 				"Network topology."
 				c4 delay: c5 init: (Maybe just: 0).
 				c2 tee: { 
-						c4.
-						c3 }.
-				c3 zip: { c5 } with: [ :a :b | a + b ] output: c1.
+						c3.
+						c4 }.
+				c3 zip: c5 with: [ :a :b | a + b ] output: c1.
 				c1 tee: { 
 						c2.
 						outChannel }.

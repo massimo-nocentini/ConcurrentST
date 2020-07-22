@@ -19,11 +19,11 @@ CSTThread >> continuation: anObject [
 ]
 
 { #category : #accessing }
-CSTThread >> digest: aDigest [
+CSTThread >> digest: anObject [
 	^ CSTThreadWithDigest new
 		  id: id;
 		  continuation: continuation;
-		  digest: aDigest;
+		  digest: anObject;
 		  yourself
 ]
 
