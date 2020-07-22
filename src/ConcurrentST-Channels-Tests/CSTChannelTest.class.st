@@ -81,6 +81,33 @@ CSTChannelTest >> testFibonacciNumbers [
 ]
 
 { #category : #tests }
+CSTChannelTest >> testFibonacciNumbersDeadlock [
+	100 in: [ :n | 
+		self
+			should: [ :co | 
+				| c1 c2 c3 c4 c5 outChannel |
+				c1 := co channel.
+				c2 := co channel.
+				c3 := co channel.
+				c4 := co channel.
+				c5 := co channel.
+				outChannel := co channel.
+
+				"Network topology."
+				c4 delay: c5 init: (Maybe just: 0).
+				c2 tee: { 
+						c4.
+						c3 }.
+				c3 zip: { c5 } with: [ :a :b | a + b ] output: c1.
+				c1 tee: { 
+						c2.
+						outChannel }.
+				c1 send: 1.
+				outChannel next: n ] coroutine
+			raise: CollectionIsEmpty ]
+]
+
+{ #category : #tests }
 CSTChannelTest >> testNaturalNumbers [
 	10000 in: [ :n | 
 		self
