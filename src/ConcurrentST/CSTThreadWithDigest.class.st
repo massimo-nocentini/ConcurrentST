@@ -14,7 +14,7 @@ CSTThreadWithDigest >> digest: anObject [
 
 { #category : #'as yet unclassified' }
 CSTThreadWithDigest >> throw: msg [
-	^ super throw: (SynchronousMessageWithDigest new
+	^ super throw: (CSTMessageWithThreadWithDigest new
 			   thread: self;
 			   msg: msg;
 			   digest: digest;

@@ -1,5 +1,5 @@
 Class {
-	#name : #SynchronousMessage,
+	#name : #CSTMessageWithThread,
 	#superclass : #Object,
 	#instVars : [
 		'msg',
@@ -9,31 +9,31 @@ Class {
 }
 
 { #category : #comparing }
-SynchronousMessage >> <= anObject [
+CSTMessageWithThread >> <= anObject [
 	^ anObject greaterThanSynchronousMessage: self
 ]
 
 { #category : #comparing }
-SynchronousMessage >> greaterThanSynchronousMessage: aMessage [
+CSTMessageWithThread >> greaterThanSynchronousMessage: aMessage [
 	^ msg > aMessage msg
 ]
 
 { #category : #accessing }
-SynchronousMessage >> msg [
+CSTMessageWithThread >> msg [
 	^ msg
 ]
 
 { #category : #accessing }
-SynchronousMessage >> msg: anObject [
+CSTMessageWithThread >> msg: anObject [
 	msg := anObject
 ]
 
 { #category : #accessing }
-SynchronousMessage >> thread [
+CSTMessageWithThread >> thread [
 	^ thread
 ]
 
 { #category : #accessing }
-SynchronousMessage >> thread: anObject [
+CSTMessageWithThread >> thread: anObject [
 	thread := anObject
 ]
