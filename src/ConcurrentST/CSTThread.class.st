@@ -18,15 +18,6 @@ CSTThread >> continuation: anObject [
 	continuation := anObject
 ]
 
-{ #category : #accessing }
-CSTThread >> digest: anObject [
-	^ CSTThreadWithDigest new
-		  id: id;
-		  continuation: continuation;
-		  digest: anObject;
-		  yourself
-]
-
 { #category : #'as yet unclassified' }
 CSTThread >> greaterThanThread: aCSTThread [
 	^ self id > aCSTThread id

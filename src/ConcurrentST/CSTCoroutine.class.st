@@ -19,11 +19,6 @@ CSTCoroutine >> asynchronousChannel [
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> asynchronousSelectiveChannel [
-	^ CSTChannel asynchronousSelective: self
-]
-
-{ #category : #'as yet unclassified' }
 CSTCoroutine >> channel [
 	^ CSTChannel synchronous: self
 ]

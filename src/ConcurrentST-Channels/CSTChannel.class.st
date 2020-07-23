@@ -16,14 +16,6 @@ CSTChannel class >> asynchronous: co [
 ]
 
 { #category : #'as yet unclassified' }
-CSTChannel class >> asynchronousSelective: co [
-	^ CSTChannelAsynchronousSelective basicNew
-		  coroutine: co;
-		  initialize;
-		  yourself
-]
-
-{ #category : #'as yet unclassified' }
 CSTChannel class >> synchronous: co [
 	^ CSTChannelSynchronous basicNew
 		  coroutine: co;
@@ -65,16 +57,6 @@ CSTChannel >> next: n [
 { #category : #accessing }
 CSTChannel >> next: n on: aStream [
 	n timesRepeat: [ aStream nextPut: self receive ]
-]
-
-{ #category : #'as yet unclassified' }
-CSTChannel >> prependBlock: aBlock [
-	^ CSTChannelWrap basicNew
-		  coroutine: co;
-		  initialize;
-		  channel: self;
-		  block: aBlock;
-		  yourself
 ]
 
 { #category : #'as yet unclassified' }
