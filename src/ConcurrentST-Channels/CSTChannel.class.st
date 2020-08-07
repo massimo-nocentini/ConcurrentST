@@ -41,7 +41,7 @@ CSTChannel >> delay: outChannel init: anObject [
 	co
 		repeat: [ :aMaybe | 
 		aMaybe delay: outChannel init: anObject channel: self ]
-		init: anObject
+		init: (Maybe just: anObject)
 ]
 
 { #category : #accessing }

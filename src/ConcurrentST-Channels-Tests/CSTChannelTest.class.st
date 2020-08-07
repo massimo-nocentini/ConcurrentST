@@ -47,7 +47,7 @@ CSTChannelTest >> testFibonacciNumbers [
 				outChannel := co channel.
 
 				"Network topology."
-				c4 delay: c5 init: (Maybe just: 0).
+				c4 delay: c5 init: 0.
 				c2 tee: { 
 						c3.
 						c4 }.
@@ -94,7 +94,7 @@ CSTChannelTest >> testFibonacciNumbersAsynchronousChannels [
 				outChannel := co asynchronousChannel.
 
 				"Network topology."
-				c4 delay: c5 init: (Maybe just: 0).
+				c4 delay: c5 init: 0.
 				c2 tee: { 
 						c4.
 						c3 }. "The order of the following two is swapped wrt the test case that uses synchronous channels."
