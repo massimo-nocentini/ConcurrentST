@@ -44,19 +44,24 @@ CSTChannel >> delay: outChannel init: anObject [
 		init: (Maybe just: anObject)
 ]
 
-{ #category : #accessing }
+{ #category : #'stream protocol' }
 CSTChannel >> next [
-	^ self next: 1
+	^ self receive
 ]
 
-{ #category : #accessing }
+{ #category : #'stream protocol' }
 CSTChannel >> next: n [
-	^ (1 to: n) collect: [ :_ | self receive ]
+	^ (1 to: n) collect: [ :_ | self next ]
 ]
 
-{ #category : #accessing }
+{ #category : #'stream protocol' }
 CSTChannel >> next: n on: aStream [
 	n timesRepeat: [ aStream nextPut: self receive ]
+]
+
+{ #category : #'stream protocol' }
+CSTChannel >> nextPut: anObject [
+	^ self send: anObject
 ]
 
 { #category : #'as yet unclassified' }
@@ -90,7 +95,7 @@ CSTChannel >> tee: aCollectionOfChannels [
 ]
 
 { #category : #'as yet unclassified' }
-CSTChannel >> zip: aCollectionOfChannels with: aBlock output: oChannel [
+CSTChannel >> zipChannels: aCollectionOfChannels with: aBlock on: oChannel [
 	co repeat: [ 
 		| args v |
 		args := Array

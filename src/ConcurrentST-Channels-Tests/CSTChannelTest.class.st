@@ -51,7 +51,7 @@ CSTChannelTest >> testFibonacciNumbers [
 				c2 tee: { 
 						c3.
 						c4 }.
-				c3 zip: { c5 } with: [ :a :b | a + b ] output: c1.
+				c3 zipChannels: { c5 } with: [ :a :b | a + b ] on: c1.
 				c1 tee: { 
 						c2.
 						outChannel }.
@@ -98,7 +98,7 @@ CSTChannelTest >> testFibonacciNumbersAsynchronousChannels [
 				c2 tee: { 
 						c4.
 						c3 }. "The order of the following two is swapped wrt the test case that uses synchronous channels."
-				c3 zip: { c5 } with: [ :a :b | a + b ] output: c1.
+				c3 zipChannels: { c5 } with: [ :a :b | a + b ] on: c1.
 				c1 tee: { 
 						c2.
 						outChannel }.
