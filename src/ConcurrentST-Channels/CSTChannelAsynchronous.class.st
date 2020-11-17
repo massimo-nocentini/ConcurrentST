@@ -11,39 +11,35 @@ Class {
 { #category : #initialization }
 CSTChannelAsynchronous >> initialize [
 	super initialize.
-	sendQueue := LeftistHeap empty.
-	receiveQueue := LeftistHeap empty
+	sendQueue := CTLinkedStoragePool queue new.
+	receiveQueue := CTLinkedStoragePool queue new
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> popMessage [
-	| msg |
-	msg := sendQueue min.
-	sendQueue := sendQueue pop.
-	^ msg
+	^ sendQueue pop
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> popThread [
-	| recvThread |
-	recvThread := receiveQueue min.
-	receiveQueue := receiveQueue pop.
-	^ recvThread
+	^ receiveQueue pop
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> pushMessage: msg [
-	sendQueue := sendQueue add: msg
+	sendQueue push: msg
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> pushThread: thread [
-	receiveQueue := receiveQueue add: thread
+	receiveQueue push: thread
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> receive [
-	^ sendQueue receiveFromSendQueueOnChannel: self
+	^ sendQueue
+		  ifEmpty: [ self receiveFromEmptySendQueue ]
+		  ifNotEmpty: [ self receiveFromNonEmptySendQueue ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -60,7 +56,9 @@ CSTChannelAsynchronous >> receiveFromNonEmptySendQueue [
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> send: msg [
-	receiveQueue send: msg toReceiveQueueOnChannel: self
+	receiveQueue
+		ifEmpty: [ self sendToEmptyReceiveQueue: msg ]
+		ifNotEmpty: [ self sendToNonEmptyReceiveQueue: msg ]
 ]
 
 { #category : #'as yet unclassified' }

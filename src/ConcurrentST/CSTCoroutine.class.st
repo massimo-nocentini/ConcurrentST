@@ -31,21 +31,18 @@ CSTCoroutine >> dispatch: aValue [
 { #category : #initialization }
 CSTCoroutine >> initialize [
 	super initialize.
-	readyQueue := LeftistHeap empty.
+	readyQueue := CTLinkedStoragePool queue new.
 	thread_id := 0
 ]
 
 { #category : #initialization }
 CSTCoroutine >> popThread [
-	| thread |
-	thread := readyQueue min.
-	readyQueue := readyQueue pop.
-	^ thread
+	^ readyQueue pop
 ]
 
 { #category : #initialization }
 CSTCoroutine >> pushThread: aThread [
-	readyQueue := readyQueue add: aThread
+	readyQueue push: aThread
 ]
 
 { #category : #'as yet unclassified' }
