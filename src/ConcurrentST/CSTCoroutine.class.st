@@ -83,7 +83,8 @@ CSTCoroutine >> spawnTracingErrors: aBlock [
 
 { #category : #enumerating }
 CSTCoroutine >> withThreadDo: aBlock [
-	^ Continuation currentDo: [ :k | 
+
+	^ Coroutine currentDo: [ :k | 
 		  | thread |
 		  thread_id := thread_id + 1.
 		  thread := CSTThread new

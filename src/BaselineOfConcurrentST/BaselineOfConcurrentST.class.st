@@ -6,11 +6,9 @@ Class {
 
 { #category : #baselines }
 BaselineOfConcurrentST >> baseline: spec [
+
 	<baseline>
-	spec for: #common do: [ "The following also install Roassal3."
-		spec
-			baseline: 'dsst'
-			with: [ spec repository: 'github://massimo-nocentini/dsst/' ].
+	spec for: #common do: [ 
 		spec
 			package: 'ConcurrentST-Extensions';
 			package: 'ConcurrentST';
