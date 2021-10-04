@@ -60,20 +60,19 @@ CSTCoroutine >> repeat: aBlock init: anObject [
 
 { #category : #'as yet unclassified' }
 CSTCoroutine >> spawn: aBlock [
-	^ self spawn: aBlock on: nil do: nil
+
+	^ self spawn: aBlock on: Exception do: [ :e | e raiseUnhandledError ]
 ]
 
 { #category : #'as yet unclassified' }
 CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
+
 	^ self withThreadDo: [ :thread | 
-		  | handledBlock |
 		  self pushThread: thread.
-		  handledBlock := aClass ifNil: [ aBlock ] ifNotNil: [ 
-			                  [ 
-			                  aBlock
-				                  on: aClass
-				                  do: hBlock ] ].
-		  handledBlock ensure: [ self dispatch: thread ] ]
+		  [ 
+		  aBlock
+			  on: aClass
+			  do: hBlock ] ensure: [ self dispatch: thread ] ]
 ]
 
 { #category : #'as yet unclassified' }

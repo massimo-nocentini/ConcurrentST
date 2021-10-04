@@ -4,7 +4,7 @@ A CSTChannelTest is a test class for testing the behavior of CSTChannel
 Class {
 	#name : #CSTChannelTest,
 	#superclass : #TestCase,
-	#category : #'ConcurrentST-Channels-Tests'
+	#category : #'ConcurrentST-Tests'
 }
 
 { #category : #tests }

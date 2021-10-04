@@ -15,9 +15,7 @@ BaselineOfConcurrentST >> baseline: spec [
 			package: 'ConcurrentST-Tests'
 			with: [ spec requires: #( 'ConcurrentST' ) ];
 			package: 'ConcurrentST-Cells';
-			package: 'ConcurrentST-Cells-Tests'
 			with: [ spec requires: #( 'ConcurrentST-Cells' ) ];
 			package: 'ConcurrentST-Channels';
-			package: 'ConcurrentST-Channels-Tests'
 			with: [ spec requires: #( 'ConcurrentST-Channels' ) ] ]
 ]

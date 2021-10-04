@@ -4,7 +4,7 @@ A CSTCellTest is a test class for testing the behavior of CSTCell
 Class {
 	#name : #CSTCellTest,
 	#superclass : #TestCase,
-	#category : #'ConcurrentST-Cells-Tests'
+	#category : #'ConcurrentST-Tests'
 }
 
 { #category : #tests }
