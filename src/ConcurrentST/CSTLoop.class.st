@@ -15,12 +15,18 @@ CSTLoop class >> block: aFullBlockClosure [
 
 { #category : #'as yet unclassified' }
 CSTLoop >> asynchronousChannel [
-	^ CSTChannel asynchronous: self
+
+	^ CSTChannelAsynchronous new
+		  loop: self;
+		  yourself
 ]
 
 { #category : #'as yet unclassified' }
 CSTLoop >> channel [
-	^ CSTChannel synchronous: self
+
+	^ CSTChannelSynchronous new
+		  loop: self;
+		  yourself
 ]
 
 { #category : #initialization }

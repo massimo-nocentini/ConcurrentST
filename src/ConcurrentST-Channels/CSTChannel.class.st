@@ -7,33 +7,12 @@ Class {
 	#category : #'ConcurrentST-Channels'
 }
 
-{ #category : #'as yet unclassified' }
-CSTChannel class >> asynchronous: co [
-	^ CSTChannelAsynchronous basicNew
-		  coroutine: co;
-		  initialize;
-		  yourself
-]
-
-{ #category : #'as yet unclassified' }
-CSTChannel class >> synchronous: co [
-	^ CSTChannelSynchronous basicNew
-		  coroutine: co;
-		  initialize;
-		  yourself
-]
-
 { #category : #enumerating }
 CSTChannel >> clone [
 	^ self class basicNew
-		  coroutine: loop;
+		  loop: loop;
 		  initialize;
 		  yourself
-]
-
-{ #category : #'as yet unclassified' }
-CSTChannel >> coroutine: aCoroutine [
-	loop := aCoroutine
 ]
 
 { #category : #'as yet unclassified' }
@@ -42,6 +21,11 @@ CSTChannel >> delay: outChannel init: anObject [
 		repeat: [ :aMaybe | 
 		aMaybe delay: outChannel init: anObject channel: self ]
 		init: (Maybe just: anObject)
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannel >> loop: aCoroutine [
+	loop := aCoroutine
 ]
 
 { #category : #'stream protocol' }
