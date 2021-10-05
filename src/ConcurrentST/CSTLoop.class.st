@@ -1,5 +1,5 @@
 Class {
-	#name : #CSTCoroutine,
+	#name : #CSTLoop,
 	#superclass : #Object,
 	#instVars : [
 		'readyQueue',
@@ -9,49 +9,49 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-CSTCoroutine class >> block: aFullBlockClosure [
+CSTLoop class >> block: aFullBlockClosure [
 	^ aFullBlockClosure value: self new
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> asynchronousChannel [
+CSTLoop >> asynchronousChannel [
 	^ CSTChannel asynchronous: self
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> channel [
+CSTLoop >> channel [
 	^ CSTChannel synchronous: self
 ]
 
 { #category : #initialization }
-CSTCoroutine >> dispatch: aValue [
+CSTLoop >> dispatch: aValue [
 	^ self popThread throw: aValue
 ]
 
 { #category : #initialization }
-CSTCoroutine >> initialize [
+CSTLoop >> initialize [
 	super initialize.
 	readyQueue := CTLinkedStoragePool queue new.
 	threadsCount := 0
 ]
 
 { #category : #initialization }
-CSTCoroutine >> popThread [
+CSTLoop >> popThread [
 	^ readyQueue pop
 ]
 
 { #category : #initialization }
-CSTCoroutine >> pushThread: aThread [
+CSTLoop >> pushThread: aThread [
 	readyQueue push: aThread
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> repeat: aBlock [
+CSTLoop >> repeat: aBlock [
 	self repeat: [ :_ | aBlock value ] init: nil
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> repeat: aBlock init: anObject [
+CSTLoop >> repeat: aBlock init: anObject [
 	self spawn: [ 
 		| current |
 		current := anObject.
@@ -59,13 +59,13 @@ CSTCoroutine >> repeat: aBlock init: anObject [
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> spawn: aBlock [
+CSTLoop >> spawn: aBlock [
 
 	^ self spawn: aBlock on: Exception do: [ :e | e raiseUnhandledError ]
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
+CSTLoop >> spawn: aBlock on: aClass do: hBlock [
 
 	^ self withThreadDo: [ :thread | 
 		  self pushThread: thread.
@@ -76,12 +76,12 @@ CSTCoroutine >> spawn: aBlock on: aClass do: hBlock [
 ]
 
 { #category : #'as yet unclassified' }
-CSTCoroutine >> spawnTracingErrors: aBlock [
+CSTLoop >> spawnTracingErrors: aBlock [
 	^ self spawn: aBlock on: Error do: [ :e | e traceCr ]
 ]
 
 { #category : #enumerating }
-CSTCoroutine >> withThreadDo: aBlock [
+CSTLoop >> withThreadDo: aBlock [
 
 	^ Coroutine currentDo: [ :k | 
 		  | thread |

@@ -8,16 +8,16 @@ Class {
 CSTChannelSynchronous >> receiveFromNonEmptySendQueue [
 	| synchronousMessage |
 	synchronousMessage := self popMessage.
-	co pushThread: synchronousMessage thread.
+	loop pushThread: synchronousMessage thread.
 	^ synchronousMessage msg
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelSynchronous >> sendToEmptyReceiveQueue: msg [
-	co withThreadDo: [ :thread | 
+	loop withThreadDo: [ :thread | 
 		self pushMessage: (CSTMessageWithThread new
 				 msg: msg;
 				 thread: thread;
 				 yourself).
-		co dispatch: thread ]
+		loop dispatch: thread ]
 ]

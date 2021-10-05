@@ -44,9 +44,9 @@ CSTChannelAsynchronous >> receive [
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> receiveFromEmptySendQueue [
-	^ co withThreadDo: [ :thread | 
+	^ loop withThreadDo: [ :thread | 
 		  self pushThread: thread.
-		  co dispatch: thread ]
+		  loop dispatch: thread ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -63,15 +63,15 @@ CSTChannelAsynchronous >> send: msg [
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> sendToEmptyReceiveQueue: msg [
-	co withThreadDo: [ :thread | 
-		co pushThread: thread.
+	loop withThreadDo: [ :thread | 
+		loop pushThread: thread.
 		self pushMessage: msg.
-		co dispatch: thread ]
+		loop dispatch: thread ]
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> sendToNonEmptyReceiveQueue: msg [
-	co withThreadDo: [ :thread | 
-		co pushThread: thread.
+	loop withThreadDo: [ :thread | 
+		loop pushThread: thread.
 		self popThread throw: msg ]
 ]

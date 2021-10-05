@@ -2,7 +2,7 @@ Class {
 	#name : #CSTChannel,
 	#superclass : #Object,
 	#instVars : [
-		'co'
+		'loop'
 	],
 	#category : #'ConcurrentST-Channels'
 }
@@ -26,19 +26,19 @@ CSTChannel class >> synchronous: co [
 { #category : #enumerating }
 CSTChannel >> clone [
 	^ self class basicNew
-		  coroutine: co;
+		  coroutine: loop;
 		  initialize;
 		  yourself
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannel >> coroutine: aCoroutine [
-	co := aCoroutine
+	loop := aCoroutine
 ]
 
 { #category : #'as yet unclassified' }
 CSTChannel >> delay: outChannel init: anObject [
-	co
+	loop
 		repeat: [ :aMaybe | 
 		aMaybe delay: outChannel init: anObject channel: self ]
 		init: (Maybe just: anObject)
@@ -73,7 +73,7 @@ CSTChannel >> receive [
 CSTChannel >> select: aBlock [
 	| channel |
 	channel := self clone.
-	co spawn: [ 
+	loop spawn: [ 
 		[ 
 		| i |
 		i := self receive.
@@ -88,7 +88,7 @@ CSTChannel >> send: anObject [
 
 { #category : #'as yet unclassified' }
 CSTChannel >> tee: aCollectionOfChannels [
-	co repeat: [ 
+	loop repeat: [ 
 		| v |
 		v := self receive.
 		aCollectionOfChannels do: [ :aChannel | aChannel send: v ] ]
@@ -96,7 +96,7 @@ CSTChannel >> tee: aCollectionOfChannels [
 
 { #category : #'as yet unclassified' }
 CSTChannel >> zipChannels: aCollectionOfChannels with: aBlock on: oChannel [
-	co repeat: [ 
+	loop repeat: [ 
 		| args v |
 		args := Array
 			        with: self receive
