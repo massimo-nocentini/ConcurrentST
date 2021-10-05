@@ -10,22 +10,11 @@ Class {
 { #category : #tests }
 CSTCoroutineTest >> testSpawn [
 	self
-		assert: [ :co | co spawn: [ co spawn: [ 4 ] ] ] coroutine class
+		assert: [ :co | co spawn: [ co spawn: [ 4 ] ] ] concurrentST class
 		equals: CSTThread.
 	self
 		assert: [ :co | 
 			co spawn: [ co spawn: [ 4 ] ].
-			3 ] coroutine
+			3 ] concurrentST
 		equals: 3
-]
-
-{ #category : #tests }
-CSTCoroutineTest >> testYield [
-	self assert: [ :co | co yield: 1 ] coroutine equals: 1.
-	self
-		assert: [ :co | 
-			co
-				yield: 1;
-				yield: 2 ] coroutine
-		equals: 2
 ]

@@ -3,7 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'readyQueue',
-		'thread_id'
+		'threadsCount'
 	],
 	#category : #ConcurrentST
 }
@@ -32,7 +32,7 @@ CSTCoroutine >> dispatch: aValue [
 CSTCoroutine >> initialize [
 	super initialize.
 	readyQueue := CTLinkedStoragePool queue new.
-	thread_id := 0
+	threadsCount := 0
 ]
 
 { #category : #initialization }
@@ -85,18 +85,10 @@ CSTCoroutine >> withThreadDo: aBlock [
 
 	^ Coroutine currentDo: [ :k | 
 		  | thread |
-		  thread_id := thread_id + 1.
+		  threadsCount := threadsCount + 1.
 		  thread := CSTThread new
-			            id: thread_id;
+			            id: threadsCount;
 			            continuation: k;
 			            yourself.
 		  aBlock value: thread ]
-]
-
-{ #category : #initialization }
-CSTCoroutine >> yield: aValue [
-	^ self withThreadDo: [ :thread | 
-		  self
-			  pushThread: thread;
-			  dispatch: aValue ]
 ]

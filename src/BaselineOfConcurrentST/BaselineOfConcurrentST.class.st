@@ -10,7 +10,6 @@ BaselineOfConcurrentST >> baseline: spec [
 	<baseline>
 	spec for: #common do: [ 
 		spec
-			package: 'ConcurrentST-Extensions';
 			package: 'ConcurrentST';
 			package: 'ConcurrentST-Tests'
 			with: [ spec requires: #( 'ConcurrentST' ) ];

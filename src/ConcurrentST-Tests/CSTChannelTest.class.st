@@ -56,7 +56,7 @@ CSTChannelTest >> testFibonacciNumbers [
 						c2.
 						outChannel }.
 				c1 send: 1.
-				outChannel next: n ] coroutine
+				outChannel next: n ] concurrentST
 			equals:
 				#( 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181
 				   6765 10946 17711 28657 46368 75025 121393 196418 317811 514229
@@ -103,7 +103,7 @@ CSTChannelTest >> testFibonacciNumbersAsynchronousChannels [
 						c2.
 						outChannel }.
 				c1 send: 1.
-				outChannel next: n ] coroutine
+				outChannel next: n ] concurrentST
 			equals:
 				#( 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181
 				   6765 10946 17711 28657 46368 75025 121393 196418 317811 514229
@@ -135,7 +135,7 @@ CSTChannelTest >> testNaturalNumbers [
 				| natsChannel |
 				natsChannel := co channel.
 				co spawn: [ self naturals: 0 channel: natsChannel ].
-				natsChannel next: n ] coroutine
+				natsChannel next: n ] concurrentST
 			equals: (0 to: n - 1) ]
 ]
 
@@ -147,7 +147,7 @@ CSTChannelTest >> testNaturalNumbersRecursionSlow [
 				| natsChannel |
 				natsChannel := co channel.
 				co spawn: [ self recursiveNaturals: 0 channel: natsChannel ].
-				natsChannel next: n ] coroutine
+				natsChannel next: n ] concurrentST
 			equals: (0 to: n - 1) ]
 ]
 
@@ -160,7 +160,7 @@ CSTChannelTest >> testNaturalNumbersSpawn [
 				natsChannel := co asynchronousChannel.
 				co spawn: [ self naturals: 0 channel: natsChannel ].
 				Array streamContents: [ :aStream | 
-					natsChannel next: n on: aStream ] ] coroutine
+					natsChannel next: n on: aStream ] ] concurrentST
 			equals: (0 to: n - 1) ]
 ]
 
@@ -175,7 +175,7 @@ CSTChannelTest >> testPrimeNumbers [
 				co
 					spawn: [ self naturals: 2 channel: natsChannel ];
 					spawn: [ self head: natsChannel primes: primesChannel ].
-				primesChannel next: n ] coroutine
+				primesChannel next: n ] concurrentST
 			equals:
 				#( 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79
 				   83 89 97 101 103 107 109 113 127 131 137 139 149 151 157 163
