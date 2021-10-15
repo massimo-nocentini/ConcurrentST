@@ -29,6 +29,19 @@ CSTLoop >> channel [
 		  yourself
 ]
 
+{ #category : #actions }
+CSTLoop >> choose: events [
+
+	| ev |
+	ev := CSTEvent new
+		      loop: self;
+		      yourself.
+
+	events do: [ :each | each addComponentsInEvent: ev ].
+
+	^ ev
+]
+
 { #category : #threading }
 CSTLoop >> dispatchThread: aValue [
 
