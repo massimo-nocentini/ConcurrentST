@@ -26,12 +26,6 @@ CSTEvent >> blockOf: aComponent [
 	^ aComponent third
 ]
 
-{ #category : #accessing }
-CSTEvent >> components: anObject [
-
-	components := anObject
-]
-
 { #category : #initialization }
 CSTEvent >> doOf: aComponent [
 
@@ -43,7 +37,7 @@ CSTEvent >> initialize [
 
 	super initialize.
 
-	self components: OrderedCollection new
+	components := OrderedCollection new
 ]
 
 { #category : #initialization }
@@ -71,7 +65,7 @@ CSTEvent >> sync [
 			  loop withThreadDo: [ :thread | 
 				  components do: [ :each | 
 					  (self blockOf: each) value: false -> thread ].
-				  loop dispatch: thread ] ]
+				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
 		  (self doOf: selectedComponents anyOne) value ]
 ]
@@ -79,21 +73,21 @@ CSTEvent >> sync [
 { #category : #'instance creation' }
 CSTEvent >> wrap: aBlock [
 
-	| newComponents |
-	newComponents := components collect: [ :each | 
-		                 Array
-			                 with: (self pollOf: each)
-			                 with: [ aBlock value: (self doOf: each) value ]
-			                 with: [ :anAssoc | 
-				                 | v |
-				                 v := loop withThreadDo: [ :thread | 
-					                      (self blockOf: each) value:
-						                      anAssoc key -> thread.
-					                      Error signal: 'Never get here.' ].
-				                 anAssoc value throw: (aBlock value: v) ] ].
+	| ev |
+	ev := self class new
+		      loop: loop;
+		      yourself.
 
-	^ self class new
-		  loop: loop;
-		  components: newComponents;
-		  yourself
+	components do: [ :each | 
+		ev
+			poll: (self pollOf: each)
+			do: [ aBlock value: (self doOf: each) value ]
+			block: [ :anAssoc | 
+				| v |
+				v := loop withThreadDo: [ :thread | 
+					     (self blockOf: each) value: anAssoc key -> thread.
+					     Error signal: 'Never get here.' ].
+				anAssoc value throw: (aBlock value: v) ] ].
+
+	^ ev
 ]
