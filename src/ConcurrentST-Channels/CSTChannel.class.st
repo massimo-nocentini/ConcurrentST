@@ -12,6 +12,14 @@ CSTChannel >> delay: outChannel init: anObject [
 		init: (Maybe just: anObject)
 ]
 
+{ #category : #accessing }
+CSTChannel >> event [
+
+	^ CSTEventWithChannel new
+		  channel: self;
+		  yourself
+]
+
 { #category : #'stream protocol' }
 CSTChannel >> next [
 	^ self receive
