@@ -77,16 +77,14 @@ CSTChannel >> tee: aCollectionOfChannels [
 CSTChannel >> zip: aChannel with: aBlock on: oChannel [
 
 	loop repeat: [ 
-		| channels ev assoc |
-		channels := { 
-			            (self event receive wrap: [ :a | a -> aChannel receive ]).
-			            (aChannel event receive wrap: [ :a | a -> self receive ]) }.
+		| events assoc |
+		events := { 
+			          (self event receive wrap: [ :a | a -> aChannel receive ]).
+			          (aChannel event receive wrap: [ :a | a -> self receive ]) }.
 
-		ev := loop choose: channels.
+		assoc := (loop choose: events) sync.
 
-		assoc := ev sync.
-
-		oChannel send: assoc key + assoc value ]
+		oChannel send: (aBlock value: assoc key value: assoc value) ]
 ]
 
 { #category : #'as yet unclassified' }
