@@ -40,7 +40,7 @@ CSTChannel >> receive [
 { #category : #enumerating }
 CSTChannel >> select: aBlock on: channel [
 
-	loop spawn: [ 
+	loop spawnPreemptive: [ 
 		[ 
 		| i |
 		i := self receive.

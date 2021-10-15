@@ -11,7 +11,7 @@ Class {
 CSTLoopTest >> testSpawn [
 
 	| thread |
-	thread := [ :co | co spawn: [ co spawn: [ 4 ] ] ] concurrentST.
+	thread := [ :co | co spawnPreemptive: [ co spawnPreemptive: [ 4 ] ] ] concurrentST.
 	self
 		assert: thread class equals: CSTThread;
 		assert: thread id equals: 2
@@ -22,7 +22,7 @@ CSTLoopTest >> testSpawnThenReturn [
 
 	self
 		assert: [ :co | 
-			co spawn: [ co spawn: [ 4 ] ].
+			co spawnPreemptive: [ co spawnPreemptive: [ 4 ] ].
 			3 ] concurrentST
 		equals: 3
 ]

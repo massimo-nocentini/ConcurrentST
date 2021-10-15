@@ -131,24 +131,26 @@ CSTChannelTest >> testFibonacciNumbersAsynchronousChannels [
 
 { #category : #tests }
 CSTChannelTest >> testNaturalNumbers [
+
 	10000 in: [ :n | 
 		self
 			assert: [ :co | 
 				| natsChannel |
 				natsChannel := co channel.
-				co spawn: [ self naturals: 0 channel: natsChannel ].
+				co spawnPreemptive: [ self naturals: 0 channel: natsChannel ].
 				natsChannel next: n ] concurrentST
 			equals: (0 to: n - 1) ]
 ]
 
 { #category : #tests }
 CSTChannelTest >> testNaturalNumbersRecursionSlow [
+
 	10000 in: [ :n | 
 		self
 			assert: [ :co | 
 				| natsChannel |
 				natsChannel := co channel.
-				co spawn: [ self recursiveNaturals: 0 channel: natsChannel ].
+				co spawnPreemptive: [ self recursiveNaturals: 0 channel: natsChannel ].
 				natsChannel next: n ] concurrentST
 			equals: (0 to: n - 1) ]
 ]
@@ -160,7 +162,7 @@ CSTChannelTest >> testNaturalNumbersSpawn [
 			assert: [ :co | 
 				| natsChannel |
 				natsChannel := co asynchronousChannel.
-				co spawn: [ self naturals: 0 channel: natsChannel ].
+				co spawnPreemptive: [ self naturals: 0 channel: natsChannel ].
 				Array streamContents: [ :aStream | 
 					natsChannel next: n on: aStream ] ] concurrentST
 			equals: (0 to: n - 1) ]
@@ -176,8 +178,9 @@ CSTChannelTest >> testPrimeNumbers [
 				natsChannel := co channel.
 				primesChannel := co channel.
 				co
-					spawn: [ self naturals: 2 channel: natsChannel ];
-					spawn: [ self head: natsChannel primes: primesChannel loop: co ].
+					spawnPreemptive: [ self naturals: 2 channel: natsChannel ];
+					spawnPreemptive: [ 
+						self head: natsChannel primes: primesChannel loop: co ].
 				primesChannel next: n ] concurrentST
 			equals:
 				#( 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79

@@ -14,7 +14,7 @@ CSTCell class >> requestsReplyChannelsOn: init coroutine: co [
 		        requestsChannel: co channel;
 		        replyChannel: co channel;
 		        yourself.
-	co spawn: [ cell loop: init ].
+	co spawnPreemptive: [ cell loop: init ].
 	^ cell
 ]
 

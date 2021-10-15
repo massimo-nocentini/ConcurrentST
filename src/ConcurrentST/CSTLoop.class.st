@@ -58,32 +58,69 @@ CSTLoop >> repeat: aBlock [
 
 { #category : #'as yet unclassified' }
 CSTLoop >> repeat: aBlock init: anObject [
-	self spawn: [ 
+	self spawnPreemptive: [ 
 		| current |
 		current := anObject.
 		[ current := aBlock value: current ] repeat ]
 ]
 
 { #category : #'as yet unclassified' }
-CSTLoop >> spawn: aBlock [
+CSTLoop >> spawnNotPreemptive: aBlock [
 
-	^ self spawn: aBlock on: Exception do: [ :e | e raiseUnhandledError ]
+	^ self
+		  spawnNotPreemptive: aBlock
+		  on: Exception
+		  do: [ :e | e raiseUnhandledError ]
 ]
 
 { #category : #'as yet unclassified' }
-CSTLoop >> spawn: aBlock on: aClass do: hBlock [
+CSTLoop >> spawnNotPreemptive: aBlock on: aClass do: hBlock [
+
+	"
+.. code: sml
+
+	fun fork f = 
+					let
+						val newThread = callcc (fn k1 => (
+															callcc (fn k2 => (throw k1 k2)); 
+															(f ()) handle _ => ();
+															exit ()))
+					in 
+						Q.enqueue (rdyQ, newThread)
+					end
+	"
+
+	| thread |
+	thread := self withThreadDo: [ :thread1 | 
+		          self withThreadDo: [ :thread2 | thread1 throw: thread2 ].
+		          [ 
+		          aBlock
+			          on: aClass
+			          do: hBlock ] ensure: [ self dispatch: thread1 ] ].
+
+	self pushThread: thread.
+
+	^ thread
+]
+
+{ #category : #'as yet unclassified' }
+CSTLoop >> spawnPreemptive: aBlock [
+
+	^ self spawnPreemptive: aBlock on: Exception do: [ :e | e raiseUnhandledError ]
+]
+
+{ #category : #'as yet unclassified' }
+CSTLoop >> spawnPreemptive: aBlock on: aClass do: hBlock [
 
 	^ self withThreadDo: [ :thread | 
 		  self pushThread: thread.
+		
 		  [ 
 		  aBlock
 			  on: aClass
-			  do: hBlock ] ensure: [ self dispatch: thread ] ]
-]
+			  do: hBlock ] ensure: [ self dispatch: thread ].
 
-{ #category : #'as yet unclassified' }
-CSTLoop >> spawnTracingErrors: aBlock [
-	^ self spawn: aBlock on: Error do: [ :e | e traceCr ]
+		  thread ]
 ]
 
 { #category : #enumerating }
