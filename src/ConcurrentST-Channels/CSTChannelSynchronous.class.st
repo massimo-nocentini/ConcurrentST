@@ -14,10 +14,11 @@ CSTChannelSynchronous >> receiveFromNonEmptySendQueue [
 
 { #category : #'as yet unclassified' }
 CSTChannelSynchronous >> sendToEmptyReceiveQueue: msg [
+
 	loop withThreadDo: [ :thread | 
 		self pushMessage: (CSTMessageWithThread new
 				 msg: msg;
 				 thread: thread;
 				 yourself).
-		loop dispatch: thread ]
+		loop dispatchThread: thread ]
 ]

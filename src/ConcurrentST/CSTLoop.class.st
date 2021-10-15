@@ -13,7 +13,7 @@ CSTLoop class >> block: aFullBlockClosure [
 	^ aFullBlockClosure value: self new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #channels }
 CSTLoop >> asynchronousChannel [
 
 	^ CSTChannelAsynchronous new
@@ -21,7 +21,7 @@ CSTLoop >> asynchronousChannel [
 		  yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #channels }
 CSTLoop >> channel [
 
 	^ CSTChannelSynchronous new
@@ -29,8 +29,9 @@ CSTLoop >> channel [
 		  yourself
 ]
 
-{ #category : #initialization }
-CSTLoop >> dispatch: aValue [
+{ #category : #threading }
+CSTLoop >> dispatchThread: aValue [
+
 	^ self popThread throw: aValue
 ]
 
@@ -41,22 +42,22 @@ CSTLoop >> initialize [
 	threadsCount := 0
 ]
 
-{ #category : #initialization }
+{ #category : #threading }
 CSTLoop >> popThread [
 	^ readyQueue pop
 ]
 
-{ #category : #initialization }
+{ #category : #threading }
 CSTLoop >> pushThread: aThread [
 	readyQueue push: aThread
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 CSTLoop >> repeat: aBlock [
 	self repeat: [ :_ | aBlock value ] init: nil
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 CSTLoop >> repeat: aBlock init: anObject [
 	self spawnPreemptive: [ 
 		| current |
@@ -64,7 +65,7 @@ CSTLoop >> repeat: aBlock init: anObject [
 		[ current := aBlock value: current ] repeat ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 CSTLoop >> spawnNotPreemptive: aBlock [
 
 	^ self
@@ -73,7 +74,7 @@ CSTLoop >> spawnNotPreemptive: aBlock [
 		  do: [ :e | e raiseUnhandledError ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 CSTLoop >> spawnNotPreemptive: aBlock on: aClass do: hBlock [
 
 	"
@@ -96,34 +97,34 @@ CSTLoop >> spawnNotPreemptive: aBlock on: aClass do: hBlock [
 		          [ 
 		          aBlock
 			          on: aClass
-			          do: hBlock ] ensure: [ self dispatch: thread1 ] ].
+			          do: hBlock ] ensure: [ self dispatchThread: thread1 ] ].
 
 	self pushThread: thread.
 
 	^ thread
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 CSTLoop >> spawnPreemptive: aBlock [
 
 	^ self spawnPreemptive: aBlock on: Exception do: [ :e | e raiseUnhandledError ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #API }
 CSTLoop >> spawnPreemptive: aBlock on: aClass do: hBlock [
 
 	^ self withThreadDo: [ :thread | 
 		  self pushThread: thread.
-		
+
 		  [ 
 		  aBlock
 			  on: aClass
-			  do: hBlock ] ensure: [ self dispatch: thread ].
+			  do: hBlock ] ensure: [ self dispatchThread: thread ].
 
 		  thread ]
 ]
 
-{ #category : #enumerating }
+{ #category : #threading }
 CSTLoop >> withThreadDo: aBlock [
 
 	^ Coroutine currentDo: [ :k | 
