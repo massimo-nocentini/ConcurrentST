@@ -36,6 +36,7 @@ CSTChannelTest >> recursiveNaturals: s channel: channel [
 
 { #category : #tests }
 CSTChannelTest >> testFibonacciNumbers [
+
 	100 in: [ :n | 
 		self
 			assert: [ :co | 
@@ -48,7 +49,7 @@ CSTChannelTest >> testFibonacciNumbers [
 				outChannel := co channel.
 
 				"Network topology."
-				c4 delay: c5 init: 0.
+				c4 delay: c5 init: 1.
 				c2 tee: { 
 						c3.
 						c4 }.
@@ -56,10 +57,10 @@ CSTChannelTest >> testFibonacciNumbers [
 				c1 tee: { 
 						c2.
 						outChannel }.
-				c1 send: 1.
+				c1 send: 0.
 				outChannel next: n ] concurrentST
 			equals:
-				#( 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181
+				#( 0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181
 				   6765 10946 17711 28657 46368 75025 121393 196418 317811 514229
 				   832040 1346269 2178309 3524578 5702887 9227465 14930352
 				   24157817 39088169 63245986 102334155 165580141 267914296
@@ -78,7 +79,7 @@ CSTChannelTest >> testFibonacciNumbers [
 				   2880067194370816120 4660046610375530309 7540113804746346429
 				   12200160415121876738 19740274219868223167 31940434634990099905
 				   51680708854858323072 83621143489848422977 135301852344706746049
-				   218922995834555169026 354224848179261915075 ) ]
+				   218922995834555169026 ) ]
 ]
 
 { #category : #tests }
