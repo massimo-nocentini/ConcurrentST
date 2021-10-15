@@ -1,19 +1,8 @@
 Class {
 	#name : #CSTChannel,
-	#superclass : #Object,
-	#instVars : [
-		'loop'
-	],
+	#superclass : #CSTObject,
 	#category : #'ConcurrentST-Channels'
 }
-
-{ #category : #enumerating }
-CSTChannel >> clone [
-	^ self class basicNew
-		  loop: loop;
-		  initialize;
-		  yourself
-]
 
 { #category : #'as yet unclassified' }
 CSTChannel >> delay: outChannel init: anObject [
@@ -21,11 +10,6 @@ CSTChannel >> delay: outChannel init: anObject [
 		repeat: [ :aMaybe | 
 		aMaybe delay: outChannel init: anObject channel: self ]
 		init: (Maybe just: anObject)
-]
-
-{ #category : #'as yet unclassified' }
-CSTChannel >> loop: aCoroutine [
-	loop := aCoroutine
 ]
 
 { #category : #'stream protocol' }
@@ -54,14 +38,14 @@ CSTChannel >> receive [
 ]
 
 { #category : #enumerating }
-CSTChannel >> select: aBlock [
-	| channel |
-	channel := self clone.
+CSTChannel >> select: aBlock on: channel [
+
 	loop spawn: [ 
 		[ 
 		| i |
 		i := self receive.
 		(aBlock value: i) ifTrue: [ channel send: i ] ] repeat ].
+
 	^ channel
 ]
 

@@ -8,14 +8,15 @@ Class {
 }
 
 { #category : #tests }
-CSTChannelTest >> head: natsChannel primes: primesChannel [
+CSTChannelTest >> head: natsChannel primes: primesChannel loop: loop [
+
 	| nats |
 	nats := natsChannel.
 	[ 
 	| p |
 	p := nats receive.
 	primesChannel send: p.
-	nats := nats select: [ :i | i \\ p ~= 0 ] ] repeat
+	nats := nats select: [ :i | i \\ p ~= 0 ] on: loop channel ] repeat
 ]
 
 { #category : #tests }
@@ -166,6 +167,7 @@ CSTChannelTest >> testNaturalNumbersSpawn [
 
 { #category : #tests }
 CSTChannelTest >> testPrimeNumbers [
+
 	100 in: [ :n | 
 		self
 			assert: [ :co | 
@@ -174,7 +176,7 @@ CSTChannelTest >> testPrimeNumbers [
 				primesChannel := co channel.
 				co
 					spawn: [ self naturals: 2 channel: natsChannel ];
-					spawn: [ self head: natsChannel primes: primesChannel ].
+					spawn: [ self head: natsChannel primes: primesChannel loop: co ].
 				primesChannel next: n ] concurrentST
 			equals:
 				#( 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79
