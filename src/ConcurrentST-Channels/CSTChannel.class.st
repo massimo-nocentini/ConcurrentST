@@ -91,11 +91,12 @@ CSTChannel >> zip: aChannel with: aBlock on: oChannel [
 CSTChannel >> zipChannels: aCollectionOfChannels with: aBlock on: oChannel [
 
 	loop repeat: [ 
-		| channels v |
-		channels := Array with: self withAll: aCollectionOfChannels.
-		
-		channels collect: [ :each  ].
-		
-		v := aBlock valueWithArguments: channels.
+		| args v |
+		args := Array
+			        with: self receive
+			        withAll:
+			        (aCollectionOfChannels collect: [ :aChannel | 
+				         aChannel receive ]).
+		v := aBlock valueWithArguments: args.
 		oChannel send: v ]
 ]
