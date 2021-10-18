@@ -10,11 +10,26 @@ Class {
 { #category : #tests }
 CSTLoopTest >> testEventNever [
 
-	| thread |
-	thread := [ :loop | loop event never sync ] concurrentST.
 	self
-		assert: thread class equals: CSTThread;
-		assert: thread id equals: 2
+		should: [ [ :loop | loop event never sync ] concurrentST ]
+		raise: CollectionIsEmpty
+]
+
+{ #category : #tests }
+CSTLoopTest >> testEventSimpleSendReceive [
+
+	| value |
+	value := Object new.
+	self
+		assert: [ :loop | 
+			| channel |
+			channel := loop channel.
+			(loop choose: { 
+					 loop event never.
+					 channel event receive.
+					 (channel event send: value).
+					 (channel event send: 1) }) sync ] concurrentST
+		equals: value
 ]
 
 { #category : #tests }
