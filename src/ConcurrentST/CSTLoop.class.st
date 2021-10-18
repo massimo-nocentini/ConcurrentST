@@ -29,13 +29,11 @@ CSTLoop >> channel [
 		  yourself
 ]
 
-{ #category : #actions }
+{ #category : #events }
 CSTLoop >> choose: events [
 
 	| ev |
-	ev := CSTEvent new
-		      loop: self;
-		      yourself.
+	ev := self event.
 
 	events do: [ :each | each addComponentsInEvent: ev ].
 
@@ -46,6 +44,14 @@ CSTLoop >> choose: events [
 CSTLoop >> dispatchThread: aValue [
 
 	^ self popThread throw: aValue
+]
+
+{ #category : #events }
+CSTLoop >> event [
+
+	^ CSTEvent new
+		  loop: self;
+		  yourself
 ]
 
 { #category : #initialization }

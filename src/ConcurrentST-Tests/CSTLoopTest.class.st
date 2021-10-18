@@ -8,6 +8,16 @@ Class {
 }
 
 { #category : #tests }
+CSTLoopTest >> testEventNever [
+
+	| thread |
+	thread := [ :loop | loop event never sync ] concurrentST.
+	self
+		assert: thread class equals: CSTThread;
+		assert: thread id equals: 2
+]
+
+{ #category : #tests }
 CSTLoopTest >> testSpawn [
 
 	| thread |

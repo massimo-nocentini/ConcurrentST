@@ -40,6 +40,12 @@ CSTEvent >> initialize [
 	components := OrderedCollection new
 ]
 
+{ #category : #'events construction' }
+CSTEvent >> never [
+
+	^ loop event
+]
+
 { #category : #initialization }
 CSTEvent >> poll: pBlock do: dBlock block: aBlock [
 
@@ -63,8 +69,9 @@ CSTEvent >> sync [
 	^ (components select: [ :each | (self pollOf: each) value ])
 		  ifEmpty: [ 
 			  loop withThreadDo: [ :thread | 
-				  components do: [ :each | 
-					  (self blockOf: each) value: false -> thread ].
+				  | assoc |
+				  assoc := (Maybe just: false) -> thread.
+				  components do: [ :each | (self blockOf: each) value: assoc ].
 				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
 		  (self doOf: selectedComponents anyOne) value ]
@@ -74,9 +81,7 @@ CSTEvent >> sync [
 CSTEvent >> wrap: aBlock [
 
 	| ev |
-	ev := self class new
-		      loop: loop;
-		      yourself.
+	ev := loop event.
 
 	components do: [ :each | 
 		ev

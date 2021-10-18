@@ -17,7 +17,7 @@ CSTChannelWithEvent >> event: anObject [
 CSTChannelWithEvent >> pollQueue: aQueue [
 
 	^ aQueue ifEmpty: [ false ] ifNotEmpty: [ 
-		  aQueue head key
+		  aQueue head key content
 			  ifTrue: [ 
 				  aQueue pop.
 				  self pollQueue: aQueue ]
@@ -31,7 +31,7 @@ CSTChannelWithEvent >> receive [
 		  poll: [ self pollQueue: sendQueue ] do: [ 
 			  | assoc |
 			  assoc := sendQueue pop.
-			  assoc key: true.
+			  assoc key content: true.
 			  loop pushThread: assoc value thread.
 			  assoc value msg ]
 		  block: [ :anAssoc | receiveQueue push: anAssoc ];
@@ -46,7 +46,7 @@ CSTChannelWithEvent >> send: msg [
 			  loop withThreadDo: [ :thread | 
 					  | assoc |
 					  assoc := receiveQueue pop.
-					  assoc key: true.
+					  assoc key content: true.
 					  loop pushThread: thread.
 					  assoc value throw: msg ] ]
 		  block: [ :anAssoc | 
