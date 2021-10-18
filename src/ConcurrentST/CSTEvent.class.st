@@ -69,9 +69,10 @@ CSTEvent >> sync [
 	^ (components select: [ :each | (self pollOf: each) value ])
 		  ifEmpty: [ 
 			  loop withThreadDo: [ :thread | 
-				  | assoc |
-				  assoc := (Maybe just: false) -> thread.
-				  components do: [ :each | (self blockOf: each) value: assoc ].
+				  | ref |
+				  ref := Maybe just: false.
+				  components do: [ :each | 
+					  (self blockOf: each) value: ref -> thread ].
 				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
 		  (self doOf: selectedComponents anyOne) value ]

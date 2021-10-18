@@ -1,17 +1,8 @@
 Class {
 	#name : #CSTChannelWithEvent,
 	#superclass : #CSTChannelAsynchronous,
-	#instVars : [
-		'event'
-	],
 	#category : #'ConcurrentST-Channels'
 }
-
-{ #category : #accessing }
-CSTChannelWithEvent >> event: anObject [
-
-	event := anObject
-]
 
 { #category : #'as yet unclassified' }
 CSTChannelWithEvent >> pollQueue: aQueue [
@@ -27,7 +18,7 @@ CSTChannelWithEvent >> pollQueue: aQueue [
 { #category : #'as yet unclassified' }
 CSTChannelWithEvent >> receive [
 
-	^ event
+	^ loop event
 		  poll: [ self pollQueue: sendQueue ] do: [ 
 			  | assoc |
 			  assoc := sendQueue pop.
@@ -41,7 +32,7 @@ CSTChannelWithEvent >> receive [
 { #category : #'as yet unclassified' }
 CSTChannelWithEvent >> send: msg [
 
-	^ event
+	^ loop event
 		  poll: [ self pollQueue: receiveQueue ] do: [ 
 			  loop withThreadDo: [ :thread | 
 					  | assoc |

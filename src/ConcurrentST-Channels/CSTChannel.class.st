@@ -17,9 +17,6 @@ CSTChannel >> event [
 
 	^ CSTChannelWithEvent new
 		  loop: loop;
-		  event: (CSTEvent new
-				   loop: loop;
-				   yourself);
 		  yourself
 ]
 
@@ -79,12 +76,15 @@ CSTChannel >> zip: aChannel with: aBlock on: oChannel [
 	loop repeat: [ 
 		| events assoc |
 		events := { 
-			          (self event receive wrap: [ :a | a -> aChannel receive ]).
-			          (aChannel event receive wrap: [ :a | a -> self receive ]) }.
+			          (self event receive wrap: [ :a | 
+				           aChannel event receive wrap: [ :b | 
+					           Array with: a with: b ] ]).
+			          (aChannel event receive wrap: [ :a | 
+				           self event receive wrap: [ :b | Array with: a with: b ] ]) }.
 
 		assoc := (loop choose: events) sync.
 
-		oChannel send: (aBlock value: assoc key value: assoc value) ]
+		oChannel send: (aBlock valueWithArguments: assoc) ]
 ]
 
 { #category : #'as yet unclassified' }
