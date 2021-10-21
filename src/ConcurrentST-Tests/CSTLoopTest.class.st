@@ -35,6 +35,25 @@ CSTLoopTest >> testEventSimpleSendReceive [
 ]
 
 { #category : #tests }
+CSTLoopTest >> testEventSimpleSendReceiveWithEventChannel [
+
+	| value |
+	value := Object new.
+
+	self
+		assert: [ :loop | 
+			| channel |
+			channel := loop channel forEvents.
+
+			loop spawnPreemptive: [ channel send: value ].
+
+			(loop event choose: { 
+					 loop event never.
+					 channel event receive }) sync ] concurrentST
+		equals: value
+]
+
+{ #category : #tests }
 CSTLoopTest >> testEventSimpleSendReceiveWrongSend [
 
 	| value |
