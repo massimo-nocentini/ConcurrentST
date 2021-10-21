@@ -22,6 +22,14 @@ CSTEvent >> addComponentsInEvent: anEvent [
 	^ anEvent
 ]
 
+{ #category : #'as yet unclassified' }
+CSTEvent >> always: anObject [
+
+	^ loop event
+		  poll: [ true ] do: [ anObject ] block: [ :anAssoc |  ];
+		  yourself
+]
+
 { #category : #initialization }
 CSTEvent >> blockOf: aComponent [
 

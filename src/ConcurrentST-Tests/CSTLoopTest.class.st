@@ -8,6 +8,21 @@ Class {
 }
 
 { #category : #tests }
+CSTLoopTest >> testEventAlways [
+
+	| value |
+	value := Object new.
+
+	self
+		assert: [ :loop | 
+			OrderedCollection new
+				add: (loop event always: value) sync;
+				add: (loop event always: value) sync;
+				yourself ] concurrentST
+		equals: (OrderedCollection with: value with: value)
+]
+
+{ #category : #tests }
 CSTLoopTest >> testEventCornellServerExample [
 
 	"http://www.cs.cornell.edu/courses/cs312/2007sp/lectures/lec27.html"
@@ -15,8 +30,8 @@ CSTLoopTest >> testEventCornellServerExample [
 	self
 		assert: [ :loop | 
 			| c1 c2 e1 e2 o |
-			c1 := loop channel forEvents.
-			c2 := loop channel forEvents.
+			c1 := loop channel withEvents.
+			c2 := loop channel withEvents.
 
 			e1 := c1 event receive.
 			e2 := c2 event receive.
@@ -84,7 +99,7 @@ CSTLoopTest >> testEventSimpleSendReceiveWithEventChannel [
 	self
 		assert: [ :loop | 
 			| channel |
-			channel := loop channel forEvents.
+			channel := loop channel withEvents.
 
 			loop spawnPreemptive: [ channel send: value ].
 

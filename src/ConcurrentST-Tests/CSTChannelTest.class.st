@@ -137,12 +137,12 @@ CSTChannelTest >> testFibonacciNumbersWithEventChannels [
 		self
 			assert: [ :co | 
 				| c1 c2 c3 c4 c5 outChannel |
-				c1 := co channel forEvents.
-				c2 := co channel forEvents.
-				c3 := co channel forEvents.
-				c4 := co channel forEvents.
-				c5 := co channel forEvents.
-				outChannel := co channel forEvents.
+				c1 := co channel withEvents.
+				c2 := co channel withEvents.
+				c3 := co channel withEvents.
+				c4 := co channel withEvents.
+				c5 := co channel withEvents.
+				outChannel := co channel withEvents.
 
 				"Network topology."
 				c4 delay: c5 init: 1.
