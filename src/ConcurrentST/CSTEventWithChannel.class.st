@@ -17,6 +17,14 @@ CSTEventWithChannel >> channel: anObject [
 ]
 
 { #category : #'as yet unclassified' }
+CSTEventWithChannel >> poll [
+
+	^ loop event choose: { 
+			  (loop event always: Maybe nothing).
+			  (self receive wrap: [ :anObj | Maybe just: anObj ]) }
+]
+
+{ #category : #'as yet unclassified' }
 CSTEventWithChannel >> receive [
 
 	^ loop event

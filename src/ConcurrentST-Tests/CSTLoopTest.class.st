@@ -23,6 +23,45 @@ CSTLoopTest >> testEventAlways [
 ]
 
 { #category : #tests }
+CSTLoopTest >> testEventAlwaysRepeat [
+
+	| value n just nothing |
+	n := 10.
+	value := Object new.
+
+	just := Maybe just: value.
+	nothing := Maybe nothing.
+
+	self
+		assert: [ :loop | 
+			| channel res pollEv o random |
+			res := OrderedCollection new.
+			random := Random seed: 17.
+
+			channel := loop channel withEvents.
+			pollEv := channel event poll.
+
+			o := loop channel.
+
+			loop spawnPreemptive: [ [ channel send: value ] repeat ].
+			loop spawnPreemptive: [ 
+				n timesRepeat: [ o send: (pollEv syncBy: random) ] ].
+
+			o next: n ] concurrentST
+		equals: { 
+				just.
+				just.
+				nothing.
+				nothing.
+				just.
+				nothing.
+				nothing.
+				nothing.
+				nothing.
+				nothing }
+]
+
+{ #category : #tests }
 CSTLoopTest >> testEventCornellServerExample [
 
 	"http://www.cs.cornell.edu/courses/cs312/2007sp/lectures/lec27.html"

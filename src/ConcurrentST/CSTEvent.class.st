@@ -93,6 +93,12 @@ CSTEvent >> pollOf: aComponent [
 { #category : #public }
 CSTEvent >> sync [
 
+	^ self syncBy: Random new
+]
+
+{ #category : #public }
+CSTEvent >> syncBy: aRandom [
+
 	^ (components select: [ :each | (self pollOf: each) value ])
 		  ifEmpty: [ 
 			  loop withThreadDo: [ :thread | 
@@ -102,7 +108,7 @@ CSTEvent >> sync [
 					  (self blockOf: each) value: ref -> thread ].
 				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
-		  (self doOf: selectedComponents anyOne) value ]
+			  (self doOf: (selectedComponents shuffleBy: aRandom) anyOne) value ]
 ]
 
 { #category : #'instance creation' }
