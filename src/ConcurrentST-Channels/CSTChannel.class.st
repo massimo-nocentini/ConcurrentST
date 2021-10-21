@@ -15,9 +15,7 @@ CSTChannel >> delay: outChannel init: anObject [
 { #category : #accessing }
 CSTChannel >> event [
 
-	^ CSTChannelWithEvent new
-		  loop: loop;
-		  yourself
+	^ loop event channel: self
 ]
 
 { #category : #'stream protocol' }
@@ -76,11 +74,12 @@ CSTChannel >> zip: aChannel with: aBlock on: oChannel [
 	loop repeat: [ 
 		| events assoc |
 		events := { 
-			          (self event receive wrap: [ :a | 
-				           aChannel event receive wrap: [ :b | 
+			          ((loop event channel: self) receive wrap: [ :a | 
+				           (loop event channel: aChannel) receive wrap: [ :b | 
 					           Array with: a with: b ] ]).
-			          (aChannel event receive wrap: [ :a | 
-				           self event receive wrap: [ :b | Array with: a with: b ] ]) }.
+			          ((loop event channel: aChannel) receive wrap: [ :a | 
+				           (loop event channel: self) receive wrap: [ :b | 
+					           Array with: a with: b ] ]) }.
 
 		assoc := (loop choose: events) sync.
 

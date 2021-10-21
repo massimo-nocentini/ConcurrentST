@@ -29,17 +29,6 @@ CSTLoop >> channel [
 		  yourself
 ]
 
-{ #category : #events }
-CSTLoop >> choose: events [
-
-	| ev |
-	ev := self event.
-
-	events do: [ :each | each addComponentsInEvent: ev ].
-
-	^ ev
-]
-
 { #category : #threading }
 CSTLoop >> dispatchThread: aValue [
 

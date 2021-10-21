@@ -16,6 +16,29 @@ CSTChannelAsynchronous >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
+CSTChannelAsynchronous >> pollMessages [
+
+	^ self pollQueue: sendQueue
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannelAsynchronous >> pollQueue: aQueue [
+
+	^ aQueue ifEmpty: [ false ] ifNotEmpty: [ 
+		  aQueue head key content
+			  ifTrue: [ 
+				  aQueue pop.
+				  self pollQueue: aQueue ]
+			  ifFalse: [ true ] ]
+]
+
+{ #category : #'as yet unclassified' }
+CSTChannelAsynchronous >> pollThreads [
+
+	^ self pollQueue: receiveQueue
+]
+
+{ #category : #'as yet unclassified' }
 CSTChannelAsynchronous >> popMessage [
 	^ sendQueue pop
 ]

@@ -17,13 +17,32 @@ CSTEvent >> addComponentsInEvent: anEvent [
 		anEvent
 			poll: (self pollOf: each)
 			do: (self doOf: each)
-			block: (self blockOf: each) ]
+			block: (self blockOf: each) ].
+
+	^ anEvent
 ]
 
 { #category : #initialization }
 CSTEvent >> blockOf: aComponent [
 
 	^ aComponent third
+]
+
+{ #category : #accessing }
+CSTEvent >> channel: aChannel [
+
+	^ CSTEventWithChannel new
+		  loop: loop;
+		  channel: aChannel;
+		  yourself
+]
+
+{ #category : #events }
+CSTEvent >> choose: events [
+
+	^ events
+		  inject: loop event
+		  into: [ :ev :each | each addComponentsInEvent: ev ]
 ]
 
 { #category : #initialization }
