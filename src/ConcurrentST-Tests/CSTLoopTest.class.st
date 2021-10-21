@@ -8,6 +8,47 @@ Class {
 }
 
 { #category : #tests }
+CSTLoopTest >> testEventCornellServerExample [
+
+	"http://www.cs.cornell.edu/courses/cs312/2007sp/lectures/lec27.html"
+
+	self
+		assert: [ :loop | 
+			| c1 c2 e1 e2 o |
+			c1 := loop channel forEvents.
+			c2 := loop channel forEvents.
+
+			e1 := c1 event receive.
+			e2 := c2 event receive.
+
+			o := loop channel.
+
+			loop
+				spawnPreemptive: [ c1 send: 100 ];
+				spawnPreemptive: [ c2 send: 100 ];
+				spawnPreemptive: [ 
+					| savings checking |
+					savings := 1000.
+					checking := 1000.
+
+					[ 
+					| amount |
+					amount := (loop event choose: { 
+								           e1.
+								           e2 }) sync.
+
+					savings := savings - amount.
+					checking := checking + amount.
+
+					o send: { 
+								savings.
+								checking } ] repeat ].
+
+			o next: 1 ] concurrentST
+		equals: #( #( 900 1100 ) )
+]
+
+{ #category : #tests }
 CSTLoopTest >> testEventNever [
 
 	self
