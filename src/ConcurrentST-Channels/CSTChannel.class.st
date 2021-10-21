@@ -18,6 +18,15 @@ CSTChannel >> event [
 	^ loop event channel: self
 ]
 
+{ #category : #'as yet unclassified' }
+CSTChannel >> forEvents [
+
+	^ CSTChannelEvent new
+		  loop: loop;
+		  channel: self;
+		  yourself
+]
+
 { #category : #'stream protocol' }
 CSTChannel >> next [
 	^ self receive
@@ -66,24 +75,6 @@ CSTChannel >> tee: aCollectionOfChannels [
 		| v |
 		v := self receive.
 		aCollectionOfChannels do: [ :aChannel | aChannel send: v ] ]
-]
-
-{ #category : #'as yet unclassified' }
-CSTChannel >> zip: aChannel with: aBlock on: oChannel [
-
-	loop repeat: [ 
-		| events assoc |
-		events := { 
-			          ((loop event channel: self) receive wrap: [ :a | 
-				           (loop event channel: aChannel) receive wrap: [ :b | 
-					           Array with: a with: b ] ]).
-			          ((loop event channel: aChannel) receive wrap: [ :a | 
-				           (loop event channel: self) receive wrap: [ :b | 
-					           Array with: a with: b ] ]) }.
-
-		assoc := (loop choose: events) sync.
-
-		oChannel send: (aBlock valueWithArguments: assoc) ]
 ]
 
 { #category : #'as yet unclassified' }

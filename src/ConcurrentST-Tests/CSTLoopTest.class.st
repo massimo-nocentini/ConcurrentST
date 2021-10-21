@@ -35,6 +35,26 @@ CSTLoopTest >> testEventSimpleSendReceive [
 ]
 
 { #category : #tests }
+CSTLoopTest >> testEventSimpleSendReceiveWrongSend [
+
+	| value |
+	value := Object new.
+
+	self
+		should: [ 
+			[ :loop | 
+			| channel |
+			channel := loop channel.
+
+			(channel event send: value) sync.
+
+			(loop event choose: { 
+					 loop event never.
+					 channel event receive }) sync ] concurrentST ]
+		raise: CollectionIsEmpty
+]
+
+{ #category : #tests }
 CSTLoopTest >> testSpawn [
 
 	| thread |
