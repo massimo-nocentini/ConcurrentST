@@ -14,12 +14,6 @@ CSTCellRequestsReplyChannels >> get [
 	^ replyChannel receive
 ]
 
-{ #category : #common }
-CSTCellRequestsReplyChannels >> init: anObject [
-
-	loop spawnPreemptive: [ self value: anObject ]
-]
-
 { #category : #'actions api' }
 CSTCellRequestsReplyChannels >> put: anObject [
 	requestsChannel send: (CSTRequest put: anObject)

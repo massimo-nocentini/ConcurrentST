@@ -12,6 +12,22 @@ CSTCell >> get [
 	self subclassResponsibility
 ]
 
+{ #category : #construction }
+CSTCell >> getChannelWithEvents: getChannel putChannelWithEvents: putChannel [
+
+	^ CSTCellGetPutChannelsWithEvents new
+		  loop: loop;
+		  getChannel: getChannel;
+		  putChannel: putChannel;
+		  yourself
+]
+
+{ #category : #common }
+CSTCell >> init: anObject [
+
+	loop spawnNotPreemptive: [ self value: anObject ]
+]
+
 { #category : #'actions api' }
 CSTCell >> put: anObject [
 	self subclassResponsibility
@@ -25,4 +41,10 @@ CSTCell >> requestChannel: requestChannel replyChannel: replyChannel [
 		  requestsChannel: requestChannel;
 		  replyChannel: replyChannel;
 		  yourself
+]
+
+{ #category : #'actions api' }
+CSTCell >> value: anObject [
+
+	self subclassResponsibility
 ]
