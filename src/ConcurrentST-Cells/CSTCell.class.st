@@ -25,7 +25,7 @@ CSTCell >> getChannelWithEvents: getChannel putChannelWithEvents: putChannel [
 { #category : #common }
 CSTCell >> init: anObject [
 
-	loop spawnNotPreemptive: [ self value: anObject ]
+	loop spawnPreemptive: [ self value: anObject ]
 ]
 
 { #category : #'actions api' }
