@@ -138,7 +138,7 @@ CSTLoopTest >> testEventNever [
 
 	self
 		should: [ [ :loop | loop event never sync ] concurrentST ]
-		raise: CollectionIsEmpty
+		raise: CSTDeadlock
 ]
 
 { #category : #tests }
@@ -196,7 +196,7 @@ CSTLoopTest >> testEventSimpleSendReceiveWrongSend [
 			(loop event choose: { 
 					 loop event never.
 					 channel event receive }) sync ] concurrentST ]
-		raise: CollectionIsEmpty
+		raise: CSTDeadlock
 ]
 
 { #category : #tests }

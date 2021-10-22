@@ -52,7 +52,10 @@ CSTLoop >> initialize [
 
 { #category : #threading }
 CSTLoop >> popThread [
-	^ readyQueue pop
+
+	^ [ readyQueue pop ]
+		  on: CollectionIsEmpty
+		  do: [ :e | e resignalAs: CSTDeadlock ]
 ]
 
 { #category : #threading }
