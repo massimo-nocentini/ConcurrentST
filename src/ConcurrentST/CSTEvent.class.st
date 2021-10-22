@@ -26,7 +26,7 @@ CSTEvent >> addComponentsInEvent: anEvent [
 { #category : #'as yet unclassified' }
 CSTEvent >> always: anObject [
 
-	^ loop event
+	^ self event
 		  poll: [ true ] do: [ anObject ] block: [ :anAssoc |  ];
 		  yourself
 ]
@@ -50,7 +50,7 @@ CSTEvent >> channel: aChannel [
 CSTEvent >> choose: events [
 
 	^ events
-		  inject: loop event
+		  inject: self event
 		  into: [ :ev :each | each addComponentsInEvent: ev ]
 ]
 
@@ -61,9 +61,15 @@ CSTEvent >> doOf: aComponent [
 ]
 
 { #category : #'as yet unclassified' }
-CSTEvent >> guard: aBlock [
+CSTEvent >> event [
 
 	^ loop event
+]
+
+{ #category : #'as yet unclassified' }
+CSTEvent >> guard: aBlock [
+
+	^ self event
 		  poll: [ true ] do: [ aBlock value sync ] block: [  ];
 		  yourself
 ]
@@ -80,7 +86,7 @@ CSTEvent >> initialize [
 { #category : #'events construction' }
 CSTEvent >> never [
 
-	^ loop event
+	^ self event
 ]
 
 { #category : #initialization }
@@ -108,8 +114,10 @@ CSTEvent >> sync [
 			  loop withThreadDo: [ :thread | 
 				  | ref |
 				  ref := Maybe just: false.
+				
 				  components do: [ :each | 
 					  (self blockOf: each) value: ref -> thread ].
+				
 				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
 			  (self doOf: (selectedComponents shuffleBy: syncRandom) anyOne)
@@ -120,18 +128,21 @@ CSTEvent >> sync [
 CSTEvent >> wrap: aBlock [
 
 	| ev |
-	ev := loop event.
+	ev := self event.
 
 	components do: [ :each | 
 		ev
 			poll: (self pollOf: each)
 			do: [ aBlock value: (self doOf: each) value ]
 			block: [ :anAssoc | 
-				| v |
+				| v witness |
+				witness := Object new.
+
 				v := loop withThreadDo: [ :thread | 
 					     (self blockOf: each) value: anAssoc key -> thread.
-					     Error signal: 'Never get here.' ].
-				anAssoc value throw: (aBlock value: v) ] ].
+					     witness ].
+
+				v ~~ witness ifTrue: [ anAssoc value throw: (aBlock value: v) ] ] ].
 
 	^ ev
 ]

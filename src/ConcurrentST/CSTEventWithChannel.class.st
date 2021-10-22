@@ -16,10 +16,16 @@ CSTEventWithChannel >> channel: anObject [
 	channel := anObject
 ]
 
+{ #category : #accessing }
+CSTEventWithChannel >> event [
+
+	^ super event channel: channel
+]
+
 { #category : #'as yet unclassified' }
 CSTEventWithChannel >> poll [
 
-	^ loop event choose: { 
+	^ self event choose: { 
 			  (loop event always: Maybe nothing).
 			  (self receive wrap: [ :anObj | Maybe just: anObj ]) }
 ]
@@ -27,7 +33,7 @@ CSTEventWithChannel >> poll [
 { #category : #'as yet unclassified' }
 CSTEventWithChannel >> receive [
 
-	^ loop event
+	^ self event
 		  poll: [ channel pollMessages ] do: [ 
 			  | assoc |
 			  assoc := channel popMessage.
@@ -41,7 +47,7 @@ CSTEventWithChannel >> receive [
 { #category : #'as yet unclassified' }
 CSTEventWithChannel >> send: msg [
 
-	^ loop event
+	^ self event
 		  poll: [ channel pollThreads ] do: [ 
 			  loop withThreadDo: [ :thread | 
 					  | assoc |
