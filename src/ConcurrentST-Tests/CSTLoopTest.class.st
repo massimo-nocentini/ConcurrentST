@@ -32,33 +32,28 @@ CSTLoopTest >> testEventAlwaysRepeat [
 	just := Maybe just: value.
 	nothing := Maybe nothing.
 
-	self
-		assert: [ :loop | 
-			| channel pollEv o random |
-			random := Random seed: 17.
+	[ :loop | 
+	| channel pollEv o |
+	channel := loop channel withEvents.
+	pollEv := channel event poll.
 
-			channel := loop channel withEvents.
-			pollEv := channel event poll.
+	o := loop channel.
 
-			o := loop channel.
+	loop
+		spawnPreemptive: [ [ channel send: value ] repeat ];
+		spawnPreemptive: [ n timesRepeat: [ o send: pollEv sync ] ].
 
-			loop
-				spawnPreemptive: [ [ channel send: value ] repeat ];
-				spawnPreemptive: [ 
-					n timesRepeat: [ o send: (pollEv syncBy: random) ] ].
-
-			o next: n ] concurrentST
-		equals: { 
-				just.
-				just.
-				nothing.
-				nothing.
-				just.
-				nothing.
-				nothing.
-				nothing.
-				nothing.
-				nothing }
+	self assert: (o next: n) equals: { 
+			just.
+			just.
+			nothing.
+			just.
+			just.
+			just.
+			just.
+			just.
+			just.
+			nothing } ] concurrentST
 ]
 
 { #category : #tests }
@@ -73,17 +68,15 @@ CSTLoopTest >> testEventAlwaysRepeatWrong [
 
 	self
 		assert: [ :loop | 
-			| channel res pollEv random |
+			| channel res pollEv |
 			res := OrderedCollection new.
-			random := Random seed: 17.
 
 			channel := loop channel withEvents.
 			pollEv := channel event poll.
 
 			loop
 				spawnPreemptive: [ [ channel send: value ] repeat ];
-				spawnPreemptive: [ 
-					n timesRepeat: [ res add: (pollEv syncBy: random) ] ].
+				spawnPreemptive: [ n timesRepeat: [ res add: pollEv sync ] ].
 
 			res asArray ] concurrentST
 		equals: { 

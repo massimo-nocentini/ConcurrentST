@@ -5,7 +5,8 @@ Class {
 	#name : #CSTEvent,
 	#superclass : #CSTObject,
 	#instVars : [
-		'components'
+		'components',
+		'syncRandom'
 	],
 	#category : #ConcurrentST
 }
@@ -59,11 +60,20 @@ CSTEvent >> doOf: aComponent [
 	^ aComponent second
 ]
 
+{ #category : #'as yet unclassified' }
+CSTEvent >> guard: aBlock [
+
+	^ loop event
+		  poll: [ true ] do: [ aBlock value sync ] block: [  ];
+		  yourself
+]
+
 { #category : #initialization }
 CSTEvent >> initialize [
 
 	super initialize.
 
+	syncRandom := Random seed: 541.
 	components := OrderedCollection new
 ]
 
@@ -93,12 +103,6 @@ CSTEvent >> pollOf: aComponent [
 { #category : #public }
 CSTEvent >> sync [
 
-	^ self syncBy: Random new
-]
-
-{ #category : #public }
-CSTEvent >> syncBy: aRandom [
-
 	^ (components select: [ :each | (self pollOf: each) value ])
 		  ifEmpty: [ 
 			  loop withThreadDo: [ :thread | 
@@ -108,7 +112,8 @@ CSTEvent >> syncBy: aRandom [
 					  (self blockOf: each) value: ref -> thread ].
 				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
-			  (self doOf: (selectedComponents shuffleBy: aRandom) anyOne) value ]
+			  (self doOf: (selectedComponents shuffleBy: syncRandom) anyOne)
+				  value ]
 ]
 
 { #category : #'instance creation' }
