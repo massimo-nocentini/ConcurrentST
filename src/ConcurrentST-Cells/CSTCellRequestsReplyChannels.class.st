@@ -15,21 +15,9 @@ CSTCellRequestsReplyChannels >> get [
 ]
 
 { #category : #common }
-CSTCellRequestsReplyChannels >> loop: anObject [
-	requestsChannel receive
-		loop: anObject
-		forCSTCellRequestsReplyChannels: self
-]
+CSTCellRequestsReplyChannels >> init: anObject [
 
-{ #category : #common }
-CSTCellRequestsReplyChannels >> loop: anObject requestGet: aRequest [
-	replyChannel send: anObject.
-	self loop: anObject
-]
-
-{ #category : #common }
-CSTCellRequestsReplyChannels >> loop: anObject requestPut: aRequest [
-	self loop: aRequest payload
+	loop spawnPreemptive: [ self value: anObject ]
 ]
 
 { #category : #'actions api' }
@@ -45,4 +33,25 @@ CSTCellRequestsReplyChannels >> replyChannel: anObject [
 { #category : #accessing }
 CSTCellRequestsReplyChannels >> requestsChannel: anObject [
 	requestsChannel := anObject
+]
+
+{ #category : #common }
+CSTCellRequestsReplyChannels >> value: anObject [
+
+	requestsChannel receive
+		value: anObject
+		forCSTCellRequestsReplyChannels: self
+]
+
+{ #category : #common }
+CSTCellRequestsReplyChannels >> value: anObject requestGet: aRequest [
+
+	replyChannel send: anObject.
+	self value: anObject
+]
+
+{ #category : #common }
+CSTCellRequestsReplyChannels >> value: anObject requestPut: aRequest [
+
+	self value: aRequest payload
 ]

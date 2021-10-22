@@ -3,20 +3,9 @@ I am an updatable storage on top of threads and channels.
 "
 Class {
 	#name : #CSTCell,
-	#superclass : #Object,
+	#superclass : #CSTObject,
 	#category : #'ConcurrentST-Cells'
 }
-
-{ #category : #'as yet unclassified' }
-CSTCell class >> requestsReplyChannelsOn: init coroutine: co [
-	| cell |
-	cell := CSTCellRequestsReplyChannels new
-		        requestsChannel: co channel;
-		        replyChannel: co channel;
-		        yourself.
-	co spawnPreemptive: [ cell loop: init ].
-	^ cell
-]
 
 { #category : #'actions api' }
 CSTCell >> get [
@@ -26,4 +15,14 @@ CSTCell >> get [
 { #category : #'actions api' }
 CSTCell >> put: anObject [
 	self subclassResponsibility
+]
+
+{ #category : #construction }
+CSTCell >> requestChannel: requestChannel replyChannel: replyChannel [
+
+	^ CSTCellRequestsReplyChannels new
+		  loop: loop;
+		  requestsChannel: requestChannel;
+		  replyChannel: replyChannel;
+		  yourself
 ]

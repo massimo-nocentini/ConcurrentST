@@ -1,6 +1,6 @@
 Extension { #name : #CSTRequest }
 
 { #category : #'*ConcurrentST-Cells' }
-CSTRequest >> loop: anObject forCSTCellRequestsReplyChannels: aCell [
+CSTRequest >> value: anObject forCSTCellRequestsReplyChannels: aCell [
 	self subclassResponsibility
 ]

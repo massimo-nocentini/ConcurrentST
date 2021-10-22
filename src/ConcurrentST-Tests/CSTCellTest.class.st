@@ -9,32 +9,53 @@ Class {
 
 { #category : #tests }
 CSTCellTest >> testUpdatableCell [
+
 	self
-		assert: [ :co | 
-			Array streamContents: [ :aStream | 
-				CSTCell requestsReplyChannelsOn: 0 coroutine: co ] ] concurrentST
-		equals: #(  ).
-	self
-		assert: [ :co | 
+		assert: [ :loop | 
 			Array streamContents: [ :aStream | 
 				| cell |
-				cell := CSTCell requestsReplyChannelsOn: 0 coroutine: co.
+				cell := (loop cell
+					         requestChannel: loop channel
+					         replyChannel: loop channel)
+					        init: 0;
+					        yourself ] ] concurrentST
+		equals: #(  ).
+	self
+		assert: [ :loop | 
+			Array streamContents: [ :aStream | 
+				| cell |
+				cell := (loop cell
+					         requestChannel: loop channel
+					         replyChannel: loop channel)
+					        init: 0;
+					        yourself.
+
 				aStream nextPut: cell get ] ] concurrentST
 		equals: #( 0 ).
 	self
-		assert: [ :co | 
+		assert: [ :loop | 
 			Array streamContents: [ :aStream | 
 				| cell |
-				cell := CSTCell requestsReplyChannelsOn: 0 coroutine: co.
+				cell := (loop cell
+					         requestChannel: loop channel
+					         replyChannel: loop channel)
+					        init: 0;
+					        yourself.
+
 				aStream
 					nextPut: cell get;
 					nextPut: cell get ] ] concurrentST
 		equals: #( 0 0 ).
 	self
-		assert: [ :co | 
+		assert: [ :loop | 
 			Array streamContents: [ :aStream | 
 				| cell |
-				cell := CSTCell requestsReplyChannelsOn: 0 coroutine: co.
+				cell := (loop cell
+					         requestChannel: loop channel
+					         replyChannel: loop channel)
+					        init: 0;
+					        yourself.
+
 				aStream nextPut: cell get.
 				cell put: 1.
 				aStream

@@ -21,6 +21,14 @@ CSTLoop >> asynchronousChannel [
 		  yourself
 ]
 
+{ #category : #'public - layout' }
+CSTLoop >> cell [
+
+	^ CSTCell new
+		  loop: self;
+		  yourself
+]
+
 { #category : #channels }
 CSTLoop >> channel [
 
