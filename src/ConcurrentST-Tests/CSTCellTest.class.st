@@ -107,16 +107,24 @@ CSTCellTest >> testUpdatableCellSelective [
 		assert: [ :loop | 
 			Array streamContents: [ :aStream | 
 				| cell |
-				cell := (loop cell
-					         getChannelWithEvents: loop channel withEvents
-					         putChannelWithEvents: loop channel withEvents)
-					        init: 0;
-					        yourself.
+				cell := loop cell
+					        getChannelWithEvents: loop channel withEvents
+					        putChannelWithEvents: loop channel withEvents.
+
+				loop spawnPreemptive: [ cell value: 0 ].
 
 				aStream nextPut: cell get.
+
 				cell put: 1.
+
+				aStream
+					nextPut: cell get;
+					nextPut: cell get.
+
+				cell put: 2.
+
 				aStream
 					nextPut: cell get;
 					nextPut: cell get ] ] concurrentST
-		equals: #( 0 1 1 )
+		equals: #( 0 1 1 2 2 )
 ]

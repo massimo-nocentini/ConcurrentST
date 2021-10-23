@@ -62,3 +62,15 @@ CSTEventWithChannel >> send: msg [
 							   yourself) ];
 		  yourself
 ]
+
+{ #category : #'as yet unclassified' }
+CSTEventWithChannel >> swap: anObject channel: inChannel [
+
+	^ self guard: [ 
+		  loop event choose: { 
+				  (channel event receive wrap: [ :anAssoc | 
+					   anAssoc value send: anObject.
+					   anAssoc key ]).
+				  ((channel event send: anObject -> inChannel) wrap: [ :useless | 
+					   inChannel receive ]) } ]
+]

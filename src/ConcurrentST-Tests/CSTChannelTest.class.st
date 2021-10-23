@@ -239,3 +239,20 @@ CSTChannelTest >> testPrimeNumbers [
 				   353 359 367 373 379 383 389 397 401 409 419 421 431 433 439 443
 				   449 457 461 463 467 479 487 491 499 503 509 521 523 541 ) ]
 ]
+
+{ #category : #tests }
+CSTChannelTest >> testSwapChannel [
+
+	| loop channel swapChannel anObject |
+	loop := CSTLoop new.
+
+	channel := loop channel withEvents.
+	swapChannel := loop channel withEvents.
+
+	anObject := Object new.
+
+	loop spawnPreemptive: [ 
+		(channel event swap: anObject channel: swapChannel) sync ].
+
+	self assert: (swapChannel next: 1) equals: #(  )
+]
