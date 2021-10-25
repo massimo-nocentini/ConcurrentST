@@ -243,7 +243,7 @@ CSTChannelTest >> testPrimeNumbers [
 { #category : #tests }
 CSTChannelTest >> testSwapChannel [
 
-	| loop channel swapChannel anObject |
+	| loop channel swapChannel anObject res |
 	loop := CSTLoop new.
 
 	channel := loop channel withEvents.
@@ -252,7 +252,9 @@ CSTChannelTest >> testSwapChannel [
 	anObject := Object new.
 
 	loop spawnPreemptive: [ 
-		(channel event swap: anObject channel: swapChannel) sync ].
+		res := (loop event choose: { 
+				        (channel event swap: anObject channel: swapChannel).
+				        swapChannel event receive }) sync ].
 
-	self assert: (swapChannel next: 1) equals: #(  )
+	self assert: res equals: #(  )
 ]

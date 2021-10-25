@@ -74,3 +74,30 @@ CSTEventWithChannel >> swap: anObject channel: inChannel [
 				  ((channel event send: anObject -> inChannel) wrap: [ :useless | 
 					   inChannel receive ]) } ]
 ]
+
+{ #category : #'as yet unclassified' }
+CSTEventWithChannel >> tee: aCollectionOfChannels [
+
+	^ self receive wrap: [ :v | 
+		  | events |
+		  events := aCollectionOfChannels withIndexCollect: [ :each :i | 
+			            (each event send: v) wrap: [ :useless | 
+				            | block pool |
+				            pool := IdentitySet new.
+				            block := [ :j | 
+				                     | w |
+				                     w := nil.
+				                     w := ((aCollectionOfChannels at: j) event 
+					                           send: v) wrap: [ :_ | pool remove: w ].
+				                     pool add: w ].
+
+				            1 to: i - 1 do: block.
+				            i + 1 to: aCollectionOfChannels size do: block.
+
+				            [ pool isEmpty ] whileFalse: [ 
+					            (loop event choose: pool) sync ] ] ].
+
+		  (loop event choose: events) sync.
+
+		  v ]
+]

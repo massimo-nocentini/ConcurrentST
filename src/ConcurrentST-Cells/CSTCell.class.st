@@ -17,8 +17,8 @@ CSTCell >> getChannelWithEvents: getChannel putChannelWithEvents: putChannel [
 
 	^ CSTCellGetPutChannelsWithEvents new
 		  loop: loop;
-		  getChannel: getChannel;
-		  putChannel: putChannel;
+		  requestsChannel: getChannel;
+		  replyChannel: putChannel;
 		  yourself
 ]
 

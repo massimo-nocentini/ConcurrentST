@@ -1,35 +1,19 @@
 Class {
 	#name : #CSTCellGetPutChannelsWithEvents,
-	#superclass : #CSTCell,
-	#instVars : [
-		'getChannel',
-		'putChannel'
-	],
+	#superclass : #CSTCellRequestsReplyChannels,
 	#category : #'ConcurrentST-Cells'
 }
 
 { #category : #'actions api' }
 CSTCellGetPutChannelsWithEvents >> get [
 
-	^ getChannel receive
-]
-
-{ #category : #accessing }
-CSTCellGetPutChannelsWithEvents >> getChannel: anObject [
-
-	getChannel := anObject
+	^ requestsChannel receive
 ]
 
 { #category : #'actions api' }
 CSTCellGetPutChannelsWithEvents >> put: anObject [
 
-	putChannel send: anObject
-]
-
-{ #category : #accessing }
-CSTCellGetPutChannelsWithEvents >> putChannel: anObject [
-
-	putChannel := anObject
+	replyChannel send: anObject
 ]
 
 { #category : #accessing }
@@ -40,7 +24,7 @@ CSTCellGetPutChannelsWithEvents >> value: anObject [
 
 	[ 
 	(loop event choose: { 
-			 (getChannel event send: current).
-			 (putChannel event receive wrap: [ :v | current := v ]) }) sync ]
+			 (requestsChannel event send: current).
+			 (replyChannel event receive wrap: [ :v | current := v ]) }) sync ]
 		repeat
 ]
