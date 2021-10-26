@@ -35,6 +35,21 @@ CSTChannelTest >> recursiveNaturals: s channel: channel [
 ]
 
 { #category : #tests }
+CSTChannelTest >> swapChannel: channel string: name n: times loop: loop [
+
+	loop spawnPreemptive: [ 
+		| s n |
+		s := name.
+		n := times.
+		[ n > 0 ] whileTrue: [ 
+			(name , ':' , s) traceCr.
+			n := n - 1.
+			s := (channel event swap: s channel: loop channel withEvents) sync ].
+
+		(name , ':' , s) traceCr ]
+]
+
+{ #category : #tests }
 CSTChannelTest >> testFibonacciNumbers [
 
 	100 in: [ :n | 
@@ -243,18 +258,33 @@ CSTChannelTest >> testPrimeNumbers [
 { #category : #tests }
 CSTChannelTest >> testSwapChannel [
 
-	| loop channel swapChannel anObject res |
+	| loop channel swapChannel anObject res n |
 	loop := CSTLoop new.
 
 	channel := loop channel withEvents.
-	swapChannel := loop channel withEvents.
 
-	anObject := Object new.
+	n := 5.
 
-	loop spawnPreemptive: [ 
-		res := (loop event choose: { 
-				        (channel event swap: anObject channel: swapChannel).
-				        swapChannel event receive }) sync ].
+	self
+		swapChannel: channel
+		string: 'first'
+		n: n
+		loop: loop.
+	self
+		swapChannel: channel
+		string: 'second'
+		n: n
+		loop: loop.
+	self
+		swapChannel: channel
+		string: 'third'
+		n: n
+		loop: loop.
+	self
+		swapChannel: channel
+		string: 'fourth'
+		n: n
+		loop: loop.
 
 	self assert: res equals: #(  )
 ]
