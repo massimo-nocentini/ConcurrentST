@@ -101,3 +101,24 @@ CSTEventWithChannel >> tee: aCollectionOfChannels [
 
 		  v ]
 ]
+
+{ #category : #'as yet unclassified' }
+CSTEventWithChannel >> zipChannels: aCollectionOfChannels with: aBlock on: oChannel [
+
+	| pool args |
+	pool := IdentitySet new.
+
+	args := Array new: aCollectionOfChannels size.
+
+	aCollectionOfChannels withIndexDo: [ :each :i | 
+		| ev |
+		ev := nil.
+		ev := each event receive wrap: [ :v | 
+			      pool remove: ev.
+			      args at: i put: v ].
+		pool add: ev ].
+
+	[ pool isNotEmpty ] whileTrue: [ (self event choose: pool) sync ].
+
+	^ oChannel event send: (aBlock valueWithArguments: args)
+]
