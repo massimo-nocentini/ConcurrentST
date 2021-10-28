@@ -70,7 +70,7 @@ CSTEvent >> event [
 CSTEvent >> guard: aBlock [
 
 	^ self event
-		  poll: [ true ] do: [ aBlock value sync ] block: [  ];
+		  poll: [ true ] do: [ aBlock value sync ] block: [ :anAssoc |  ];
 		  yourself
 ]
 
@@ -135,14 +135,11 @@ CSTEvent >> wrap: aBlock [
 			poll: (self pollOf: each)
 			do: [ aBlock value: (self doOf: each) value ]
 			block: [ :anAssoc | 
-				| v witness |
-				witness := Object new.
+				loop withThreadDo: [ :thread | 
+					| v |
+					v := (self blockOf: each) value: anAssoc key -> thread.
 
-				v := loop withThreadDo: [ :thread | 
-					     (self blockOf: each) value: anAssoc key -> thread.
-					     witness ].
-
-				v ~~ witness ifTrue: [ anAssoc value throw: (aBlock value: v) ] ] ].
+					anAssoc value throw: (aBlock value: v) ] ] ].
 
 	^ ev
 ]

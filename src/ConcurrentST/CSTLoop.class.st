@@ -146,7 +146,7 @@ CSTLoop >> spawnPreemptive: aBlock on: aClass do: hBlock [
 { #category : #threading }
 CSTLoop >> withThreadDo: aBlock [
 
-	^ Coroutine currentDo: [ :k | 
+	^ Continuation currentDo: [ :k | 
 		  | thread |
 		  threadsCount := threadsCount + 1.
 		  thread := CSTThread new

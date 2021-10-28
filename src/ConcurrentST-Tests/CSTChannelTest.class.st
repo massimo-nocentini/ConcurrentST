@@ -255,7 +255,7 @@ CSTChannelTest >> testPrimeNumbers [
 { #category : #tests }
 CSTChannelTest >> testSwapChannel [
 
-	| loop channel o |
+	| loop channel o array |
 	loop := CSTLoop new.
 
 	channel := loop channel withEvents.
@@ -282,5 +282,11 @@ CSTChannelTest >> testSwapChannel [
 		string: 'fourth'
 		loop: loop.
 
-	self assert: (o next: 5) equals: #(  )
+	array := #( 'first:first' 'second:second' 'third:third' 'fourth:fourth'
+	            'second:first' 'fourth:third' 'first:second'
+	            'third:fourth' 'fourth:first' 'third:second'
+	            'second:third' 'first:fourth' 'third:first' 'first:third'
+	            'fourth:second' 'second:fourth' ).
+
+	self assert: (o next: array size double) equals: array , array
 ]
