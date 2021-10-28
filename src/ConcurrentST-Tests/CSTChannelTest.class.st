@@ -206,12 +206,14 @@ CSTChannelTest >> testNaturalNumbers [
 { #category : #tests }
 CSTChannelTest >> testNaturalNumbersRecursionSlow [
 
+	self skip.
 	10000 in: [ :n | 
 		self
 			assert: [ :co | 
 				| natsChannel |
 				natsChannel := co channel.
-				co spawnPreemptive: [ self recursiveNaturals: 0 channel: natsChannel ].
+				co spawnPreemptive: [ 
+					self recursiveNaturals: 0 channel: natsChannel ].
 				natsChannel next: n ] concurrentST
 			equals: (0 to: n - 1) ]
 ]
