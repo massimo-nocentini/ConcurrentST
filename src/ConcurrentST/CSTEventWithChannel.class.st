@@ -40,7 +40,9 @@ CSTEventWithChannel >> receive [
 			  assoc key content: true.
 			  loop pushThread: assoc value thread.
 			  assoc value msg ]
-		  block: [ :anAssoc | channel pushThread: anAssoc ];
+		  block: [ :anAssoc :aWitness | 
+			  channel pushThread: anAssoc.
+			  aWitness ];
 		  yourself
 ]
 
@@ -55,11 +57,12 @@ CSTEventWithChannel >> send: msg [
 					  assoc key content: true.
 					  loop pushThread: thread.
 					  assoc value throw: msg ] ]
-		  block: [ :anAssoc | 
+		  block: [ :anAssoc :aWitness | 
 			  channel pushMessage: anAssoc key -> (CSTMessageWithThread new
 							   msg: msg;
 							   thread: anAssoc value;
-							   yourself) ];
+							   yourself).
+			  aWitness ];
 		  yourself
 ]
 

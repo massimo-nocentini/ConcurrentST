@@ -27,7 +27,9 @@ CSTEvent >> addComponentsInEvent: anEvent [
 CSTEvent >> always: anObject [
 
 	^ self event
-		  poll: [ true ] do: [ anObject ] block: [ :anAssoc |  ];
+		  poll: [ true ]
+		  do: [ anObject ]
+		  block: [ :anAssoc :aWitness | aWitness ];
 		  yourself
 ]
 
@@ -70,7 +72,9 @@ CSTEvent >> event [
 CSTEvent >> guard: aBlock [
 
 	^ self event
-		  poll: [ true ] do: [ aBlock value sync ] block: [ :anAssoc |  ];
+		  poll: [ true ]
+		  do: [ aBlock value sync ]
+		  block: [ :anAssoc :aWitness | aWitness ];
 		  yourself
 ]
 
@@ -112,12 +116,12 @@ CSTEvent >> sync [
 	^ (components select: [ :each | (self pollOf: each) value ])
 		  ifEmpty: [ 
 			  loop withThreadDo: [ :thread | 
-				  | ref |
+				  | ref witness |
 				  ref := Maybe just: false.
-				
+				  witness := Object new.
 				  components do: [ :each | 
-					  (self blockOf: each) value: ref -> thread ].
-				
+					  (self blockOf: each) value: ref -> thread value: witness ].
+
 				  loop dispatchThread: thread ] ]
 		  ifNotEmpty: [ :selectedComponents | 
 			  (self doOf: (selectedComponents shuffleBy: syncRandom) anyOne)
@@ -134,12 +138,16 @@ CSTEvent >> wrap: aBlock [
 		ev
 			poll: (self pollOf: each)
 			do: [ aBlock value: (self doOf: each) value ]
-			block: [ :anAssoc | 
-				loop withThreadDo: [ :thread | 
-					| v |
-					v := (self blockOf: each) value: anAssoc key -> thread.
+			block: [ :anAssoc :aWitness | 
+				| v |
+				v := loop withThreadDo: [ :thread | 
+					     (self blockOf: each)
+						     value: anAssoc key -> thread
+						     value: aWitness ].
 
-					anAssoc value throw: (aBlock value: v) ] ] ].
+				v == aWitness
+					ifTrue: [ v ]
+					ifFalse: [ anAssoc value throw: (aBlock value: v) ] ] ].
 
 	^ ev
 ]
