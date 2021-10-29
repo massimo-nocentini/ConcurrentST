@@ -119,6 +119,7 @@ CSTEvent >> sync [
 				  | ref witness |
 				  ref := Maybe just: false.
 				  witness := Object new.
+				
 				  components do: [ :each | 
 					  (self blockOf: each) value: ref -> thread value: witness ].
 
