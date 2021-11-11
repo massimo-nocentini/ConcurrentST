@@ -29,8 +29,8 @@ CSTLoopTest >> testEventAlwaysRepeat [
 	n := 10.
 	value := Object new.
 
-	just := Maybe just: value.
-	nothing := Maybe nothing.
+	just := CollectionElement with: value.
+	nothing := CollectionElement withNil.
 
 	[ :loop | 
 	| channel pollEv o |
@@ -63,8 +63,8 @@ CSTLoopTest >> testEventAlwaysRepeatWrong [
 	n := 10.
 	value := Object new.
 
-	just := Maybe just: value.
-	nothing := Maybe nothing.
+	just := CollectionElement with: value.
+	nothing := CollectionElement withNil.
 
 	self
 		assert: [ :loop | 

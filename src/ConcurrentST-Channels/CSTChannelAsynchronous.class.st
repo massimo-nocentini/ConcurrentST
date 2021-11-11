@@ -25,7 +25,7 @@ CSTChannelAsynchronous >> pollMessages [
 CSTChannelAsynchronous >> pollQueue: aQueue [
 
 	^ aQueue ifEmpty: [ false ] ifNotEmpty: [ 
-		  aQueue head key content
+		  aQueue head key enclosedElement
 			  ifTrue: [ 
 				  aQueue pop.
 				  self pollQueue: aQueue ]

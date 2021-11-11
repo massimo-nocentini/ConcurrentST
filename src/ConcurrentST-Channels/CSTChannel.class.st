@@ -6,10 +6,15 @@ Class {
 
 { #category : #'as yet unclassified' }
 CSTChannel >> delay: outChannel init: anObject [
+
 	loop
 		repeat: [ :aMaybe | 
-		aMaybe delay: outChannel init: anObject channel: self ]
-		init: (Maybe just: anObject)
+			aMaybe
+				ifNil: [ CollectionElement with: self receive ]
+				ifEnclosed: [ :enclosed | 
+					outChannel send: enclosed.
+					CollectionElement withNil ] ]
+		init: (CollectionElement with: anObject)
 ]
 
 { #category : #accessing }

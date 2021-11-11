@@ -26,8 +26,8 @@ CSTEventWithChannel >> event [
 CSTEventWithChannel >> poll [
 
 	^ self event choose: { 
-			  (loop event always: Maybe nothing).
-			  (self receive wrap: [ :anObj | Maybe just: anObj ]) }
+			  (loop event always: CollectionElement withNil).
+			  (self receive wrap: [ :anObj | CollectionElement with: anObj ]) }
 ]
 
 { #category : #'as yet unclassified' }
@@ -37,7 +37,7 @@ CSTEventWithChannel >> receive [
 		  poll: [ channel pollMessages ] do: [ 
 			  | assoc |
 			  assoc := channel popMessage.
-			  assoc key content: true.
+			  assoc key enclosedElement: true.
 			  loop pushThread: assoc value thread.
 			  assoc value msg ]
 		  block: [ :anAssoc :aWitness | 
@@ -54,7 +54,7 @@ CSTEventWithChannel >> send: msg [
 			  loop withThreadDo: [ :thread | 
 					  | assoc |
 					  assoc := channel popThread.
-					  assoc key content: true.
+					  assoc key enclosedElement: true.
 					  loop pushThread: thread.
 					  assoc value throw: msg ] ]
 		  block: [ :anAssoc :aWitness | 

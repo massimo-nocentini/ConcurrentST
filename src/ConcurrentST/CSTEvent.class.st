@@ -117,9 +117,9 @@ CSTEvent >> sync [
 		  ifEmpty: [ 
 			  loop withThreadDo: [ :thread | 
 				  | ref witness |
-				  ref := Maybe just: false.
+				  ref := CollectionElement with: false.
 				  witness := Object new.
-				
+
 				  components do: [ :each | 
 					  (self blockOf: each) value: ref -> thread value: witness ].
 
